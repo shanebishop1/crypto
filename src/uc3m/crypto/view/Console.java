@@ -1,4 +1,4 @@
-package uc3m.crypto;
+package uc3m.crypto.view;
 
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;

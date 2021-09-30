@@ -1,36 +1,28 @@
-package uc3m.crypto;
+package uc3m.crypto.controller;
 
-import com.sun.tools.javac.Main;
+import uc3m.crypto.model.DB;
+import uc3m.crypto.view.Login;
 
-import java.awt.event.KeyEvent;
-import java.io.*;
 import java.util.Scanner;
 import java.util.Random;
-import java.net.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.event.*;
-import javax.swing.*;
+import javax.swing.WindowConstants;
 
 
-public class MainClass {
-    private static String [][] db;
+public class Controller {
     private static Random random;
     private static Login login;
+    private static DB db;
 
-    public MainClass(){
+    public Controller(){
         random = new Random();
-        db = new String [10][2];
-        db[5][0] = "Luky";
-        db[5][1] = "Bily";
-
+        db = new DB();
         login = new Login();
         login.setVisible(true);
         login.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
     public static void main(String[] args) {
-        MainClass mainClass = new MainClass();
+        Controller controller = new Controller();
     }
 
     public static void login() {
@@ -43,16 +35,7 @@ public class MainClass {
     }
 
     public static void login(String username, String password ) {
-        boolean loggedIn = false;
-        for (String[] data : db) {
-            if (data[0] != null && data[1] != null) {
-                if (data[0].equals(username) && data[1].equals(password)) {
-                    loggedIn = true;
-                    break;
-                }
-            }
-        }
-
+        boolean loggedIn = db.searchUsernamePassword(username, password);
         long randLong = random.nextLong();
 
         if (loggedIn) {

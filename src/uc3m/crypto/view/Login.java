@@ -1,7 +1,8 @@
-package uc3m.crypto;
+package uc3m.crypto.view;
+
+import uc3m.crypto.controller.Controller;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.event.*;
 
 import javax.swing.*;
@@ -19,7 +20,7 @@ public class Login extends JFrame implements KeyListener{
         login.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                MainClass.login(username.getText(), password.getText());
+                Controller.login(username.getText(), password.getText());
             }
         });
         JPanel userInputPanel = new JPanel(new GridLayout(0,2));
@@ -57,11 +58,5 @@ public class Login extends JFrame implements KeyListener{
     public void process(String s){
         String text = out.getText();
         out.setText(text + ((text.length() == 0) ? "" : "\n") + s);
-    }
-
-    public static void main(String[] args){
-        Login x = new Login();
-        x.setVisible(true);
-        x.setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 }
