@@ -1,8 +1,8 @@
 package uc3m.crypto;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
+import java.awt.event.*;
 
 import javax.swing.*;
 
@@ -16,6 +16,12 @@ public class Login extends JFrame implements KeyListener{
         username = new JTextField(25);
         password = new JPasswordField(25);
         JButton login = new JButton("login");
+        login.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MainClass.login(username.getText(), password.getText());
+            }
+        });
         JPanel userInputPanel = new JPanel(new GridLayout(0,2));
         /*userInputPanel.add(new Label("username:"));
         userInputPanel.add(username);
@@ -42,6 +48,10 @@ public class Login extends JFrame implements KeyListener{
             process(in.getText());
             in.setText("");
         }*/
+    }
+
+    public void setText(String text) {
+        out.setText(text);
     }
 
     public void process(String s){
