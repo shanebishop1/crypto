@@ -8,11 +8,14 @@ import java.awt.event.*;
 import javax.swing.*;
 
 
-public class Login extends JFrame implements KeyListener{
+public class Login extends JFrame implements KeyListener {
     private JTextArea out;
     private JTextField username, password;
-    public Login(){
-        this.setLayout(new GridLayout(0,2));
+    private Controller controller;
+
+    public Login(Controller controller) {
+        this.controller = controller;
+        this.setLayout(new GridLayout(0, 2));
         out = new JTextArea();
         username = new JTextField(25);
         password = new JPasswordField(25);
@@ -20,10 +23,10 @@ public class Login extends JFrame implements KeyListener{
         login.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Controller.login(username.getText(), password.getText());
+                controller.login(username.getText(), password.getText());
             }
         });
-        JPanel userInputPanel = new JPanel(new GridLayout(0,2));
+        JPanel userInputPanel = new JPanel(new GridLayout(0, 2));
         /*userInputPanel.add(new Label("username:"));
         userInputPanel.add(username);
         userInputPanel.add(new Label("password:"));
@@ -39,10 +42,13 @@ public class Login extends JFrame implements KeyListener{
         this.setPreferredSize(new Dimension(400, 300));
         this.pack();
     }
+
     public void keyPressed(KeyEvent e) {
     }
+
     public void keyReleased(KeyEvent e) {
     }
+
     public void keyTyped(KeyEvent e) {
         /*if(e.getKeyChar() == (int)'\n'){
             e.consume();
@@ -55,7 +61,7 @@ public class Login extends JFrame implements KeyListener{
         out.setText(text);
     }
 
-    public void process(String s){
+    public void process(String s) {
         String text = out.getText();
         out.setText(text + ((text.length() == 0) ? "" : "\n") + s);
     }
