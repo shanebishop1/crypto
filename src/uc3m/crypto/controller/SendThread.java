@@ -17,10 +17,8 @@ public class SendThread extends Thread {
 
         try {
             OutputStream output = socket.getOutputStream();
-            if (output != null && !output.equals("")) {
-                writer = new PrintWriter(output, true);
-                writer.println(controller.getUser().getUsername());
-            }
+            writer = new PrintWriter(output, true);
+            writer.println(controller.getUser().getUsername());
 
         } catch (IOException e) {
             System.out.println("IO Exception: " + e.getMessage());
@@ -39,7 +37,9 @@ public class SendThread extends Thread {
     }
 
     synchronized public void sendText(String outMsg) {
-        writer.println(outMsg);
+        if (outMsg != null && !outMsg.equals("")) {
+            writer.println(outMsg);
+        }
     }
 }
 
