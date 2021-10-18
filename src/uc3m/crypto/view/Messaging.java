@@ -58,7 +58,7 @@ public class Messaging extends JFrame implements KeyListener {
         Messages.add(panelSouth, BorderLayout.SOUTH);
         buttonSend = new JButton();
         buttonSend.setFocusable(false);
-        buttonSend.setText("Button");
+        buttonSend.setText("Send");
         panelSouth.add(buttonSend, BorderLayout.EAST);
         in = new JTextField();
         in.setColumns(0);
@@ -174,6 +174,7 @@ public class Messaging extends JFrame implements KeyListener {
 
     public String getUserInput() {
         String text = in.getText();
+        System.out.println(text);
         in.setText("");
         return text;
     }
