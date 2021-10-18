@@ -31,7 +31,7 @@ public class Controller {
         login = new Login(this);
 
         targetHostName = "localhost";
-        targetPort = 7679;
+        targetPort = 5505;
     }
 
     public static void main(String[] args) {
@@ -110,8 +110,10 @@ public class Controller {
 
     public void logout() {
         ui.dispose();
+        sendMessage("///LOGGING_OUT");
         login = new Login(this);
         user = null;
+
     }
 
     public User getUser() {

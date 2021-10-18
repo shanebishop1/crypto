@@ -22,13 +22,16 @@ public class UserThread extends Thread {
             OutputStream output = socket.getOutputStream();
             writer = new PrintWriter(output, true);
 
-            String userName = reader.readLine();
+            userName = reader.readLine();
             server.broadcast("****  " + userName + " has connected to the server.  ****");
             String clientMessage;
             String toSend = reader.readLine();
 
             while (toSend != null) {
                 try {
+                    if (toSend.equals("///LOGGING_OUT")) {
+                        break;
+                    }
                     clientMessage = "[" + userName + "]: " + toSend;
                     server.broadcast(clientMessage);
                     toSend = reader.readLine();
@@ -39,13 +42,9 @@ public class UserThread extends Thread {
                     socket.close();
                     break;
                 }
-
-                server.removeUser(this);
-                socket.close();
             }
-
-
-
+            server.removeUser(this);
+            socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
