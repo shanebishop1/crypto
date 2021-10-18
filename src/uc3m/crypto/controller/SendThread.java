@@ -22,7 +22,7 @@ public class SendThread extends Thread {
 
         } catch (IOException e) {
             System.out.println("IO Exception: " + e.getMessage());
-            controller.getUI().process("IO Exception: " + e.getMessage());
+            controller.getUI().writeLine("IO Exception: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -37,7 +37,6 @@ public class SendThread extends Thread {
     }
 
     synchronized public void sendText(String outMsg) {
-        System.out.println(outMsg);
         writer.println(outMsg);
     }
 }

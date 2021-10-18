@@ -18,7 +18,7 @@ public class ReceiveThread extends Thread {
             InputStream input = socket.getInputStream();
             reader = new BufferedReader(new InputStreamReader(input));
         } catch (IOException e) {
-            this.controller.getUI().process("IO Exception: " + e.getMessage());
+            this.controller.getUI().writeLine("IO Exception: " + e.getMessage());
             System.out.println("IO Exception: " + e.getMessage());
             e.printStackTrace();
         }
@@ -28,9 +28,9 @@ public class ReceiveThread extends Thread {
         while (true) {
             try {
                 String response = reader.readLine();
-                controller.getUI().process(response);
+                controller.getUI().writeLine(response);
             } catch (IOException e) {
-                controller.getUI().process("IO Exception: " + e.getMessage());
+                controller.getUI().writeLine("IO Exception: " + e.getMessage());
                 System.out.println("IO Exception: " + e.getMessage());
                 e.printStackTrace();
                 break;

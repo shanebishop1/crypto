@@ -1,8 +1,7 @@
-package uc3m.server;
+package uc3m.crypto.server;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
 
 public class UserThread extends Thread {
     private Socket socket;
