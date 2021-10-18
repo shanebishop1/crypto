@@ -32,7 +32,7 @@ public class Server {
 
     void broadcast(String message, UserThread exemptUser) {
         for (UserThread user : userThreads) {
-            if (user != null && user != exemptUser) {
+            if (user != null /*&& user != exemptUser*/) {
                 user.sendMessage(message);
             }
         }
