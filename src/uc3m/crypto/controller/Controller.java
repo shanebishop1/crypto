@@ -5,6 +5,7 @@ import uc3m.crypto.model.User;
 import uc3m.crypto.view.Login;
 import uc3m.crypto.view.Messaging;
 
+import javax.crypto.Cipher;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
