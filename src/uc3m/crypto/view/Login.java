@@ -22,6 +22,7 @@ public class Login extends JFrame implements KeyListener {
         out = new JTextArea(3, 30);
         out.setLineWrap(true);
         out.setWrapStyleWord(true);
+        out.setEditable(false);
 
         username = new JTextField(25);
         usernameLabel = new JLabel("Username");

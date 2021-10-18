@@ -4,7 +4,6 @@ import uc3m.crypto.model.DB;
 import uc3m.crypto.model.User;
 import uc3m.crypto.view.Login;
 import uc3m.crypto.view.Messaging;
-import uc3m.crypto.view.UI;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -12,7 +11,6 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import javax.swing.WindowConstants;
 
 
 public class Controller {
