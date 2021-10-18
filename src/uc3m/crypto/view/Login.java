@@ -16,6 +16,7 @@ public class Login extends JFrame implements KeyListener {
     private final JButton login;
     public Login(Controller controller){
         this.controller = controller;
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setLayout(null);
 
         out = new JTextArea(3, 30);

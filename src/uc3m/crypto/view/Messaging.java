@@ -113,6 +113,8 @@ public class Messaging extends JFrame implements KeyListener {
         exitButton = new JButton();
         exitButton.setText("Exit");
         panel1.add(exitButton, new com.intellij.uiDesigner.core.GridConstraints(3, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+
+        this.setSize(new Dimension(800, 500));
     }
 
     private void setEvents() {
@@ -162,6 +164,8 @@ public class Messaging extends JFrame implements KeyListener {
     }
 
     public void writeLine(String line) {
+        if (line == null)
+            return;
         if (line.substring(line.length() - 1).toCharArray()[0] != '\n') {
             line += "\n";
         }

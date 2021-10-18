@@ -7,7 +7,7 @@ public class DB {
     List<User> users = new ArrayList<User>();
 
     public DB() {
-        users.add(new User("Lukas", "Pass1234"));
+        users.add(new User("Lukas", "p"));
         users.add(new User("Shane", "p"));
     }
 

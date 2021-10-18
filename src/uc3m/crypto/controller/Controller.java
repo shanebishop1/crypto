@@ -33,7 +33,7 @@ public class Controller {
         login = new Login(this);
 
         targetHostName = "localhost";
-        targetPort = 7680;
+        targetPort = 7679;
     }
 
     public static void main(String[] args) {
@@ -72,6 +72,7 @@ public class Controller {
                     TimeUnit.SECONDS.sleep(5);
                 } catch (Exception ex) {
                     ui.writeLine("Sleep error: " + ex.getMessage());
+                    break;
                 }
             }
         }
@@ -112,6 +113,7 @@ public class Controller {
     public void logout() {
         ui.dispose();
         login = new Login(this);
+        user = null;
     }
 
     public User getUser() {
