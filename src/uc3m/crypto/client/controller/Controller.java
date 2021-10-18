@@ -1,11 +1,10 @@
-package uc3m.crypto.controller;
+package uc3m.crypto.client.controller;
 
 import uc3m.crypto.model.DB;
 import uc3m.crypto.model.User;
-import uc3m.crypto.view.Login;
-import uc3m.crypto.view.Messaging;
+import uc3m.crypto.client.view.Login;
+import uc3m.crypto.client.view.Messaging;
 
-import javax.crypto.Cipher;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;

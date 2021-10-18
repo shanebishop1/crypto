@@ -1,6 +1,6 @@
-package uc3m.crypto.view;
+package uc3m.crypto.client.view;
 
-import uc3m.crypto.controller.Controller;
+import uc3m.crypto.client.controller.Controller;
 
 import javax.swing.*;
 import java.awt.*;

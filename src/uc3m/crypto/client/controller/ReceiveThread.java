@@ -1,4 +1,4 @@
-package uc3m.crypto.controller;
+package uc3m.crypto.client.controller;
 
 import java.io.BufferedReader;
 import java.io.IOException;
