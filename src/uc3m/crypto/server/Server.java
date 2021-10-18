@@ -30,7 +30,7 @@ public class Server {
         server.start();
     }
 
-    void broadcast(String message, UserThread exemptUser) {
+    void broadcast(String message) {
         for (UserThread user : userThreads) {
             if (user != null /*&& user != exemptUser*/) {
                 user.sendMessage(message);
@@ -39,6 +39,7 @@ public class Server {
     }
 
     void removeUser(UserThread user) {
+        broadcast("**** " + user.getUserName() + " has left. ****");
         userThreads.remove(user);
     }
 }

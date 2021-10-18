@@ -7,6 +7,7 @@ public class UserThread extends Thread {
     private Socket socket;
     private Server server;
     private PrintWriter writer;
+    private String userName;
 
     public UserThread(Socket socket, Server server) {
         this.socket = socket;
@@ -22,23 +23,41 @@ public class UserThread extends Thread {
             writer = new PrintWriter(output, true);
 
             String userName = reader.readLine();
-            server.broadcast("****  " + userName + " has connected to the server.  ****", this);
+            server.broadcast("****  " + userName + " has connected to the server.  ****");
             String clientMessage;
             String toSend = reader.readLine();
 
             while (toSend != null) {
-                clientMessage = "[" + userName + "]: " + toSend;
-                server.broadcast(clientMessage, this);
-                toSend = reader.readLine();
+                try {
+                    clientMessage = "[" + userName + "]: " + toSend;
+                    server.broadcast(clientMessage);
+                    toSend = reader.readLine();
+                }
+                catch (SocketException ex) {
+                    System.out.println(ex.getMessage());
+                    server.removeUser(this);
+                    socket.close();
+                    break;
+                }
+
+                server.removeUser(this);
+                socket.close();
             }
 
-            server.removeUser(this);
-            socket.close();
 
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     void sendMessage(String message) {
