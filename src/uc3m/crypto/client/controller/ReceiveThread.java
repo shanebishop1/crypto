@@ -1,6 +1,7 @@
 package uc3m.crypto.client.controller;
 
 import uc3m.crypto.security.AES;
+import uc3m.crypto.server.model.Message;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
@@ -49,7 +50,8 @@ public class ReceiveThread extends Thread {
                     try {
                         System.out.println("Response: " + response);
                         String plainMsg = AES.decrypt("AES/CBC/PKCS5Padding", response, controller.getKey(), controller.getIv());
-                        controller.getUI().writeLine(plainMsg);
+                        Message msg = new Message(plainMsg);
+                        controller.getUI().writeLine(msg.toUIString());
                     } catch (Exception ex) {
                         System.out.println("Receive Error: " + ex.getMessage());
                     }

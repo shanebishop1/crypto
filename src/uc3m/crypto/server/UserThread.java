@@ -1,5 +1,6 @@
 package uc3m.crypto.server;
 
+import uc3m.crypto.security.AES;
 import uc3m.crypto.server.model.Message;
 
 import java.io.*;
@@ -30,18 +31,23 @@ public class UserThread extends Thread {
             sendMessage(Base64.getEncoder().encodeToString(server.getIv().getIV()));
 
             userName = reader.readLine();
-            server.broadcast("****  " + userName + " has connected to the server.  ****");
+            server.broadcast(new Message("Server", "****  " + userName + " has connected to the server.  ****", new Date()));
             Message clientMessage;
-            String toSend = reader.readLine();
+            String encryptedMessage = reader.readLine();
 
-            while (toSend != null) {
+            while (encryptedMessage != null) {
                 try {
-                    if (toSend.equals("///LOGGING_OUT")) {
+                    String plainMessage = AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, server.getKey(), server.getIv());
+                    if (plainMessage.equals("///LOGGING_OUT")) {
                         break;
                     }
-                    clientMessage = new Message(userName, toSend, new Date());
+                    clientMessage = new Message(userName, plainMessage, new Date());
                     server.broadcast(clientMessage);
-                    toSend = reader.readLine();
+                } catch (Exception ex) {
+                    System.out.println("Server decryption: " + ex.getMessage());
+                }
+                try {
+                    encryptedMessage = reader.readLine();
                 }
                 catch (SocketException ex) {
                     System.out.println(ex.getMessage());
@@ -71,6 +77,11 @@ public class UserThread extends Thread {
     }
 
     void sendMessage(Message message) {
-
+        try {
+            String encryptedMessage = AES.encrypt("AES/CBC/PKCS5Padding", message.toString(), server.getKey(), server.getIv());
+            writer.println(encryptedMessage);
+        } catch (Exception ex) {
+            System.out.println("Server decryption: " + ex.getMessage());
+        }
     }
 }

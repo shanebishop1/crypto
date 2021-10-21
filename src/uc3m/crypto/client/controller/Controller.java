@@ -2,6 +2,7 @@ package uc3m.crypto.client.controller;
 
 import uc3m.crypto.security.AES;
 import uc3m.crypto.server.model.DB;
+import uc3m.crypto.server.model.Message;
 import uc3m.crypto.server.model.User;
 import uc3m.crypto.client.view.Login;
 import uc3m.crypto.client.view.Messaging;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.Scanner;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -43,6 +45,9 @@ public class Controller {
 
     public static void main(String[] args) {
         Controller controller = new Controller();
+
+        Message msg = new Message("King", "Hello world", new Date());
+        Message msg2 = new Message(msg.toString());
     }
 
     public void connectServer() {

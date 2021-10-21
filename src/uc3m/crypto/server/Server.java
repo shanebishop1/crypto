@@ -61,7 +61,7 @@ public class Server {
     }
 
     void removeUser(UserThread user) {
-        broadcast("**** " + user.getUserName() + " has left. ****");
+        broadcast(new Message("Server", "****  " + user.getUserName() + " has left.  ****", new Date()));
         userThreads.remove(user);
     }
 
