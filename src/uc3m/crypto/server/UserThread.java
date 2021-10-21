@@ -3,8 +3,11 @@ package uc3m.crypto.server;
 import uc3m.crypto.security.AES;
 import uc3m.crypto.server.model.Message;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 import java.io.*;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
 
@@ -13,10 +16,14 @@ public class UserThread extends Thread {
     private Server server;
     private PrintWriter writer;
     private String userName;
+    private final SecretKey key;
+    private final IvParameterSpec iv;
 
-    public UserThread(Socket socket, Server server) {
+    public UserThread(Socket socket, Server server, byte[] secret) {
         this.socket = socket;
         this.server = server;
+        key = AES.generateKeyFromSecret(secret);
+        iv = AES.generateIvFromSecret(secret);
     }
 
     public void run() {
@@ -27,8 +34,8 @@ public class UserThread extends Thread {
             OutputStream output = socket.getOutputStream();
             writer = new PrintWriter(output, true);
 
-            sendMessage(Base64.getEncoder().encodeToString(server.getKey().getEncoded()));
-            sendMessage(Base64.getEncoder().encodeToString(server.getIv().getIV()));
+            /*sendMessage(Base64.getEncoder().encodeToString(server.getKey().getEncoded()));
+            sendMessage(Base64.getEncoder().encodeToString(server.getIv().getIV()));*/
 
             userName = reader.readLine();
             server.broadcast(new Message("Server", "****  " + userName + " has connected to the server.  ****", new Date()));
@@ -37,7 +44,7 @@ public class UserThread extends Thread {
 
             while (encryptedMessage != null) {
                 try {
-                    String plainMessage = AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, server.getKey(), server.getIv());
+                    String plainMessage = AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv);
                     if (plainMessage.equals("///LOGGING_OUT")) {
                         break;
                     }
@@ -78,7 +85,7 @@ public class UserThread extends Thread {
 
     void sendMessage(Message message) {
         try {
-            String encryptedMessage = AES.encrypt("AES/CBC/PKCS5Padding", message.toString(), server.getKey(), server.getIv());
+            String encryptedMessage = AES.encrypt("AES/CBC/PKCS5Padding", message.toString(), key, iv);
             writer.println(encryptedMessage);
         } catch (Exception ex) {
             System.out.println("Server decryption: " + ex.getMessage());

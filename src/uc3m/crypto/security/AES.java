@@ -16,12 +16,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
+import java.util.Arrays;
 import java.util.Base64;
 
 public class AES {
@@ -52,10 +50,27 @@ public class AES {
         return key;
     }
 
+    public static SecretKey generateKeyFromSecret(byte[] secret) {
+        SecretKeySpec key = new SecretKeySpec(secret, 0, 16, "AES");
+        return key;
+    }
+
     public static IvParameterSpec generateIv() {
         byte[] iv = new byte[16];
         new SecureRandom().nextBytes(iv);
         return new IvParameterSpec(iv);
+    }
+
+    public static IvParameterSpec generateIvFromSecret(byte[] secret) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] iv = digest.digest(secret);
+            iv = Arrays.copyOfRange(iv, 0, 16);
+            return new IvParameterSpec(iv);
+        } catch (NoSuchAlgorithmException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return null;
     }
 
 }

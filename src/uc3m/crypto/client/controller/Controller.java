@@ -1,6 +1,7 @@
 package uc3m.crypto.client.controller;
 
 import uc3m.crypto.security.AES;
+import uc3m.crypto.security.DH;
 import uc3m.crypto.server.model.DB;
 import uc3m.crypto.server.model.Message;
 import uc3m.crypto.server.model.User;
@@ -12,6 +13,7 @@ import javax.crypto.spec.IvParameterSpec;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.Scanner;
@@ -67,6 +69,11 @@ public class Controller {
             while (controller.getUser() != null || isInterrupted()) {
                 try {
                     Socket socket = new Socket(targetHostName, targetPort);
+                    DH dh = new DH();
+                    byte[] secret = dh.init(socket, false);
+                    System.out.println(secret);
+                    key = AES.generateKeyFromSecret(secret);
+                    iv = AES.generateIvFromSecret(secret);
                     ui.writeLine("Connected to server.");
                     new ReceiveThread(socket, controller).start();
                     sendThread = new SendThread(socket, controller);

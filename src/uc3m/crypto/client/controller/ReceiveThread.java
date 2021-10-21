@@ -36,7 +36,7 @@ public class ReceiveThread extends Thread {
         while (true) {
             try {
                 String response = reader.readLine();
-                if (receivedMessagesCounter == 0) {
+                /*if (receivedMessagesCounter == 0) {
                     byte[] decodedKey = Base64.getDecoder().decode(response);
                     System.out.println("Response(Key): " + response);
                     controller.setKey(new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES"));
@@ -45,16 +45,14 @@ public class ReceiveThread extends Thread {
                     byte[] decodedIv = Base64.getDecoder().decode(response);
                     System.out.println("Response(IV): " + response);
                     controller.setIv(new IvParameterSpec(decodedIv, 0, decodedIv.length));
-                }
-                else {
-                    try {
-                        System.out.println("Response: " + response);
-                        String plainMsg = AES.decrypt("AES/CBC/PKCS5Padding", response, controller.getKey(), controller.getIv());
-                        Message msg = new Message(plainMsg);
-                        controller.getUI().writeLine(msg.toUIString());
-                    } catch (Exception ex) {
-                        System.out.println("Receive Error: " + ex.getMessage());
-                    }
+                }*/
+                try {
+                    System.out.println("Response: " + response);
+                    String plainMsg = AES.decrypt("AES/CBC/PKCS5Padding", response, controller.getKey(), controller.getIv());
+                    Message msg = new Message(plainMsg);
+                    controller.getUI().writeLine(msg.toUIString());
+                } catch (Exception ex) {
+                    System.out.println("Receive Error: " + ex.getMessage());
                 }
                 receivedMessagesCounter++;
             } catch (IOException e) {

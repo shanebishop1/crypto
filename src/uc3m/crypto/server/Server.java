@@ -1,6 +1,7 @@
 package uc3m.crypto.server;
 
 import uc3m.crypto.security.AES;
+import uc3m.crypto.security.DH;
 import uc3m.crypto.server.model.Message;
 
 import javax.crypto.SecretKey;
@@ -12,23 +13,17 @@ import java.util.*;
 
 public class Server {
     private Set<UserThread> userThreads = new HashSet<>();
-    private SecretKey key;
-    private IvParameterSpec iv;
 
     public Server() {
     }
 
     public void start() {
-        try {
-            key = AES.generateKey(128);
-            iv = AES.generateIv();
-        } catch (NoSuchAlgorithmException ex) {
-            System.out.println(ex.getMessage());
-        }
         try (ServerSocket serverSocket = new ServerSocket(5505)) {
             while (true) {
                 Socket socket = serverSocket.accept();
-                UserThread newUser = new UserThread(socket, this);
+                DH dh = new DH();
+                byte[] secret = dh.init(socket, true);
+                UserThread newUser = new UserThread(socket, this, secret);
                 userThreads.add(newUser);
                 newUser.start();
             }
@@ -63,21 +58,5 @@ public class Server {
     void removeUser(UserThread user) {
         broadcast(new Message("Server", "****  " + user.getUserName() + " has left.  ****", new Date()));
         userThreads.remove(user);
-    }
-
-    public SecretKey getKey() {
-        return key;
-    }
-
-    public void setKey(SecretKey key) {
-        this.key = key;
-    }
-
-    public IvParameterSpec getIv() {
-        return iv;
-    }
-
-    public void setIv(IvParameterSpec iv) {
-        this.iv = iv;
     }
 }
