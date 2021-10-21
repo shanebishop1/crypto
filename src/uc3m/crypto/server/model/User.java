@@ -1,4 +1,4 @@
-package uc3m.crypto.model;
+package uc3m.crypto.server.model;
 
 public class User {
     private String username;

@@ -1,7 +1,11 @@
 package uc3m.crypto.server;
 
+import uc3m.crypto.server.model.Message;
+
 import java.io.*;
 import java.net.*;
+import java.util.Base64;
+import java.util.Date;
 
 public class UserThread extends Thread {
     private Socket socket;
@@ -22,9 +26,12 @@ public class UserThread extends Thread {
             OutputStream output = socket.getOutputStream();
             writer = new PrintWriter(output, true);
 
+            sendMessage(Base64.getEncoder().encodeToString(server.getKey().getEncoded()));
+            sendMessage(Base64.getEncoder().encodeToString(server.getIv().getIV()));
+
             userName = reader.readLine();
             server.broadcast("****  " + userName + " has connected to the server.  ****");
-            String clientMessage;
+            Message clientMessage;
             String toSend = reader.readLine();
 
             while (toSend != null) {
@@ -32,7 +39,7 @@ public class UserThread extends Thread {
                     if (toSend.equals("///LOGGING_OUT")) {
                         break;
                     }
-                    clientMessage = "[" + userName + "]: " + toSend;
+                    clientMessage = new Message(userName, toSend, new Date());
                     server.broadcast(clientMessage);
                     toSend = reader.readLine();
                 }
@@ -61,5 +68,9 @@ public class UserThread extends Thread {
 
     void sendMessage(String message) {
         writer.println(message);
+    }
+
+    void sendMessage(Message message) {
+
     }
 }

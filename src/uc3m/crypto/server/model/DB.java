@@ -1,4 +1,4 @@
-package uc3m.crypto.model;
+package uc3m.crypto.server.model;
 
 import java.util.ArrayList;
 import java.util.List;

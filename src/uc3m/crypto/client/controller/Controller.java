@@ -1,13 +1,17 @@
 package uc3m.crypto.client.controller;
 
-import uc3m.crypto.model.DB;
-import uc3m.crypto.model.User;
+import uc3m.crypto.security.AES;
+import uc3m.crypto.server.model.DB;
+import uc3m.crypto.server.model.User;
 import uc3m.crypto.client.view.Login;
 import uc3m.crypto.client.view.Messaging;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -21,6 +25,9 @@ public class Controller {
     private volatile User user;
     private SendThread sendThread;
     private ConnectServer connectThread;
+
+    private SecretKey key;
+    private IvParameterSpec iv;
 
     private int targetPort;
     private String targetHostName;
@@ -143,6 +150,22 @@ public class Controller {
 
     public void setTargetHostName(String targetHostName) {
         this.targetHostName = targetHostName;
+    }
+
+    public SecretKey getKey() {
+        return key;
+    }
+
+    public void setKey(SecretKey key) {
+        this.key = key;
+    }
+
+    public IvParameterSpec getIv() {
+        return iv;
+    }
+
+    public void setIv(IvParameterSpec iv) {
+        this.iv = iv;
     }
 
     public void sendMessage(String message) {

@@ -52,4 +52,10 @@ public class AES {
         return key;
     }
 
+    public static IvParameterSpec generateIv() {
+        byte[] iv = new byte[16];
+        new SecureRandom().nextBytes(iv);
+        return new IvParameterSpec(iv);
+    }
+
 }
