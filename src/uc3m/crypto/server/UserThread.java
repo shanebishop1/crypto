@@ -8,19 +8,18 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.naming.AuthenticationException;
 import java.io.*;
-import java.net.*;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
+import java.net.Socket;
+import java.net.SocketException;
 import java.util.Date;
 
 public class UserThread extends Thread {
+    private final SecretKey key;
+    private final IvParameterSpec iv;
     private Socket socket;
     private Server server;
     private PrintWriter writer;
     private String userName;
     private User user;
-    private final SecretKey key;
-    private final IvParameterSpec iv;
 
     public UserThread(Socket socket, Server server, byte[] secret) {
         this.socket = socket;
@@ -38,19 +37,30 @@ public class UserThread extends Thread {
             writer = new PrintWriter(output, true);
 
             Message clientMessage;
-            String encryptedMessage = reader.readLine(); //USERNAME
+            boolean isSignUpInstance = false;
+            String encryptedMessage = reader.readLine();
+            String initialInstruction = AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv);
+            if (initialInstruction.equals("SignMeUp")) isSignUpInstance = true;
+            encryptedMessage = reader.readLine(); //USERNAME
             String username = AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv);
             encryptedMessage = reader.readLine(); //PASSWORD
             String password = AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv);
-            user = server.autentificate(username, password);
+            if (isSignUpInstance) user = server.signUp(username, password);
+            else user = server.authenticate(username, password);
+
             if (user != null) {
-                sendMessage("ACCEPTED");
+                if (isSignUpInstance) sendMessage("SIGNED UP");
+                else sendMessage("ACCEPTED");
                 userName = username;
                 server.broadcast(new Message("Server", "****  " + userName + " has connected to the server.  ****", new Date()));
-            }
-            else {
-                sendMessage("DENIED");
-                throw new AuthenticationException("Unauthorized");
+            } else {
+                if (isSignUpInstance) {
+                    sendMessage("INVALID SIGNUP");
+                    throw new AuthenticationException("Invalid signup");
+                } else {
+                    sendMessage("DENIED");
+                    throw new AuthenticationException("Unauthorized");
+                }
             }
 
             encryptedMessage = reader.readLine();
@@ -67,8 +77,7 @@ public class UserThread extends Thread {
                 }
                 try {
                     encryptedMessage = reader.readLine();
-                }
-                catch (SocketException ex) {
+                } catch (SocketException ex) {
                     System.out.println(ex.getMessage());
                     server.removeUser(this);
                     socket.close();
@@ -80,6 +89,12 @@ public class UserThread extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (AuthenticationException e) {
+            server.removeUser(this);
+            try {
+                socket.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
             System.out.println(e.getMessage());
         } catch (Exception e) {
             System.out.println(e.getMessage());

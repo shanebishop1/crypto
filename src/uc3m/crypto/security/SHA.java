@@ -1,9 +1,7 @@
 package uc3m.crypto.security;
 
-import javax.crypto.spec.IvParameterSpec;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 
 public class SHA {
     public static byte[] digest(String text) {

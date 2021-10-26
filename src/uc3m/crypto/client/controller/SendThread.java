@@ -4,12 +4,10 @@ package uc3m.crypto.client.controller;
 import uc3m.crypto.security.AES;
 import uc3m.crypto.server.Server;
 
-import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.security.NoSuchAlgorithmException;
 
 public class SendThread extends Thread {
     private PrintWriter writer;
@@ -42,13 +40,11 @@ public class SendThread extends Thread {
     }
 
     synchronized public void sendText(String outMsg) {
-        if (outMsg != null && !outMsg.equals("")) {
+        if (outMsg != null && !outMsg.equals("") && !outMsg.isBlank()) {
             try {
                 String encMsg = AES.encrypt("AES/CBC/PKCS5Padding", outMsg, controller.getKey(), controller.getIv());
                 writer.println(encMsg);
-                System.out.println("Encrypted msg: " + encMsg);
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 System.out.println("AES: " + ex.getMessage());
             }
         }

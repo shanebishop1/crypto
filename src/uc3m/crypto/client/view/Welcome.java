@@ -112,6 +112,7 @@ public class Welcome extends JFrame implements KeyListener {
 
         this.setVisible(true);
         changeCard("Connect");
+        serverHostName.requestFocusInWindow();
     }
 
     public void keyPressed(KeyEvent e) {
@@ -134,6 +135,7 @@ public class Welcome extends JFrame implements KeyListener {
             }
         }
     }
+
     public void login() {
         controller.login(username.getText(), password.getText());
     }
@@ -146,10 +148,10 @@ public class Welcome extends JFrame implements KeyListener {
         controller.setTargetHostName(serverHostName.getText());
         try {
             controller.setTargetPort(Integer.parseInt(serverPort.getText()));
-        } catch(NumberFormatException ex) {
+        } catch (NumberFormatException ex) {
             System.out.println(ex.getMessage());
         }
-        controller.connectServer();
+        controller.connectServer(false);
     }
 
     public void setText(String text) {
@@ -167,6 +169,10 @@ public class Welcome extends JFrame implements KeyListener {
     }
 
     public void changeCard(String card) {
-        ((CardLayout)(MainPanel.getLayout())).show(MainPanel, card);
+        ((CardLayout) (MainPanel.getLayout())).show(MainPanel, card);
+    }
+
+    public JTextField getUsernameField() {
+        return this.username;
     }
 }

@@ -3,9 +3,11 @@ package uc3m.crypto.security;
 import javax.crypto.KeyAgreement;
 import javax.crypto.interfaces.DHPublicKey;
 import javax.crypto.spec.DHParameterSpec;
-import java.io.*;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -25,8 +27,7 @@ public class DH {
                 //System.out.println(ex.getStackTrace());
                 ex.printStackTrace();
             }
-        }
-        else {
+        } else {
             try {
                 return initFirstToReceive(socket);
             } catch (Exception ex) {
@@ -62,7 +63,7 @@ public class DH {
         /*int length = din.readInt();
         byte[] bobPubKeyEnc = new byte[length];
         din.readFully(bobPubKeyEnc, 0, bobPubKeyEnc.length); // read the message*/
-        byte[] bobPubKeyEnc = (byte[])oin.readObject();
+        byte[] bobPubKeyEnc = (byte[]) oin.readObject();
 
         KeyFactory aliceKeyFac = KeyFactory.getInstance("DH");
         X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(bobPubKeyEnc);
@@ -86,7 +87,7 @@ public class DH {
         byte[] alicePubKeyEnc = new byte[length];
         din.readFully(alicePubKeyEnc, 0, alicePubKeyEnc.length); // read the message*/
 
-        byte[] alicePubKeyEnc = (byte[])oin.readObject();
+        byte[] alicePubKeyEnc = (byte[]) oin.readObject();
 
         //System.out.println("Alice Public Key received by Bob: " + new String(alicePubKeyEnc, StandardCharsets.US_ASCII) + ", Length: " + alicePubKeyEnc.length);
 
@@ -95,7 +96,7 @@ public class DH {
 
         PublicKey alicePubKey = bobKeyFac.generatePublic(x509KeySpec);
 
-        DHParameterSpec dhParamFromAlicePubKey = ((DHPublicKey)alicePubKey).getParams();
+        DHParameterSpec dhParamFromAlicePubKey = ((DHPublicKey) alicePubKey).getParams();
 
         KeyPairGenerator bobKpairGen = KeyPairGenerator.getInstance("DH");
         bobKpairGen.initialize(dhParamFromAlicePubKey);
