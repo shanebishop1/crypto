@@ -71,7 +71,7 @@ public class Controller {
                     Socket socket = new Socket(targetHostName, targetPort);
                     DH dh = new DH();
                     byte[] secret = dh.init(socket, false);
-                    System.out.println(secret);
+                    //System.out.println(secret);
                     key = AES.generateKeyFromSecret(secret);
                     iv = AES.generateIvFromSecret(secret);
                     ui.writeLine("Connected to server.");
