@@ -80,7 +80,7 @@ public class Messaging extends JFrame implements KeyListener {
         logoutButton.setText("Logout");
         panelNorth.add(logoutButton);
         settingsButton = new JButton();
-        settingsButton.setText("Settings");
+        settingsButton.setText("Connect");
         panelNorth.add(settingsButton);
         testButton = new JButton();
         testButton.setText("Test");
@@ -92,11 +92,11 @@ public class Messaging extends JFrame implements KeyListener {
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(4, 2, new Insets(0, 0, 0, 0), -1, -1));
         Settings.add(panel1);
-        final JLabel label1 = new JLabel();
+        /*final JLabel label1 = new JLabel();
         label1.setText("Listen on port:");
         panel1.add(label1, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         listenPort = new JTextField();
-        panel1.add(listenPort, new com.intellij.uiDesigner.core.GridConstraints(0, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        panel1.add(listenPort, new com.intellij.uiDesigner.core.GridConstraints(0, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));*/
         final JLabel label2 = new JLabel();
         label2.setText("Target port:");
         panel1.add(label2, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -124,7 +124,7 @@ public class Messaging extends JFrame implements KeyListener {
         settingsButton.addActionListener(e -> {
             CardLayout cardLayout = (CardLayout)(MainPanel.getLayout());
             cardLayout.show(MainPanel, "Settings");
-            listenPort.setText(controller.getTargetPort()+"");
+            //listenPort.setText(controller.getTargetPort()+"");
             targetPort.setText(controller.getTargetPort()+"");
             hostname.setText(controller.getTargetHostName()+"");
         });
@@ -132,7 +132,11 @@ public class Messaging extends JFrame implements KeyListener {
             CardLayout cardLayout = (CardLayout)(MainPanel.getLayout());
             cardLayout.show(MainPanel, "Messages");
         });
-        applyButton.addActionListener(e -> applySettings());
+        applyButton.addActionListener(e -> {
+            applySettings();
+            CardLayout cardLayout = (CardLayout)(MainPanel.getLayout());
+            cardLayout.show(MainPanel, "Messages");
+        });
         //testButton.addActionListener(e -> controller.dumpMessages());
     }
 

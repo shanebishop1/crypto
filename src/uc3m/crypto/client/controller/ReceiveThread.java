@@ -36,20 +36,21 @@ public class ReceiveThread extends Thread {
         while (true) {
             try {
                 String response = reader.readLine();
-                /*if (receivedMessagesCounter == 0) {
-                    byte[] decodedKey = Base64.getDecoder().decode(response);
-                    System.out.println("Response(Key): " + response);
-                    controller.setKey(new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES"));
+                if (response == null) {
+                    break;
                 }
-                else if (receivedMessagesCounter == 1) {
-                    byte[] decodedIv = Base64.getDecoder().decode(response);
-                    System.out.println("Response(IV): " + response);
-                    controller.setIv(new IvParameterSpec(decodedIv, 0, decodedIv.length));
-                }*/
                 try {
                     System.out.println("Response: " + response);
                     String plainMsg = AES.decrypt("AES/CBC/PKCS5Padding", response, controller.getKey(), controller.getIv());
                     Message msg = new Message(plainMsg);
+                    if (receivedMessagesCounter == 0) {
+                        if (msg.getContent().equals("ACCEPTED")) {
+                            controller.loginSuccess();
+                        }
+                        else {
+                            controller.loginFailure();
+                        }
+                    }
                     controller.getUI().writeLine(msg.toUIString());
                 } catch (Exception ex) {
                     System.out.println("Receive Error: " + ex.getMessage());

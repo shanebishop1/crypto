@@ -1,7 +1,9 @@
 package uc3m.crypto.client.controller;
 
+import uc3m.crypto.client.view.Welcome;
 import uc3m.crypto.security.AES;
 import uc3m.crypto.security.DH;
+import uc3m.crypto.security.SHA;
 import uc3m.crypto.server.model.DB;
 import uc3m.crypto.server.model.Message;
 import uc3m.crypto.server.model.User;
@@ -15,6 +17,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Scanner;
 import java.util.Random;
@@ -22,11 +25,11 @@ import java.util.concurrent.TimeUnit;
 
 
 public class Controller {
-    private DB db;
     private Random random;
-    private Login login;
+    private Welcome welcome;
     private Messaging ui;
     private volatile User user;
+    private String username;
     private SendThread sendThread;
     private ConnectServer connectThread;
 
@@ -38,8 +41,7 @@ public class Controller {
 
     public Controller() {
         random = new Random();
-        db = new DB();
-        login = new Login(this);
+        welcome = new Welcome(this);
 
         targetHostName = "localhost";
         targetPort = 5505;
@@ -66,7 +68,7 @@ public class Controller {
             this.controller = controller;
         }
         public void run() {
-            while (controller.getUser() != null || isInterrupted()) {
+            while (/*controller.getUser() != null || */!isInterrupted()) {
                 try {
                     Socket socket = new Socket(targetHostName, targetPort);
                     DH dh = new DH();
@@ -74,26 +76,37 @@ public class Controller {
                     //System.out.println(secret);
                     key = AES.generateKeyFromSecret(secret);
                     iv = AES.generateIvFromSecret(secret);
-                    ui.writeLine("Connected to server.");
+                    welcome.changeCard("Login");
+                    writeLine("Connected to server.");
                     new ReceiveThread(socket, controller).start();
                     sendThread = new SendThread(socket, controller);
                     break;
                 } catch (UnknownHostException e) {
-                    ui.writeLine("Unknown Host: " + e.getMessage());
+                    writeLine("Unknown Host: " + e.getMessage());
                     System.out.println("Unknown Host: " + e.getMessage());
                 } catch (IOException e) {
-                    ui.writeLine("I/O Exception: " + e.getMessage());
+                    writeLine("I/O Exception: " + e.getMessage());
                     System.out.println("I/O Exception: " + e.getMessage());
                 }
                 try {
                     TimeUnit.SECONDS.sleep(5);
                 } catch (Exception ex) {
-                    ui.writeLine("Sleep error: " + ex.getMessage());
+                    writeLine("Sleep error: " + ex.getMessage());
                     break;
                 }
             }
         }
     }
+
+    public void writeLine(String text) {
+        if (ui != null) {
+            ui.writeLine(text);
+        }
+        else if (welcome != null) {
+            welcome.setText(text);
+        }
+    }
+
 
 
     public void login() {
@@ -106,31 +119,28 @@ public class Controller {
     }
 
     public void login(String username, String password) {
-        User currentUser = this.db.searchUsernamePassword(username, password);
-        long randLong = random.nextLong();
+        setUsername(username);
+        sendMessage(username);
+        sendMessage(Base64.getEncoder().encodeToString(SHA.digest(password)));
+    }
 
-        if (currentUser != null) {
-            if (login != null) {
-                login.setText("Login successful, here is your random long: " + randLong);
-                login.dispose();
-            }
-            user = currentUser;
-            ui = new Messaging(this);
-            ui.setUsername(user.getUsername());
-            connectServer();
-            System.out.println("Login successful, here is your random long: " + randLong);
-        } else {
-            if (login != null) {
-                login.setText("Login unsuccessful");
-            }
-            System.out.println("Login unsuccessful");
+    public void loginSuccess() {
+        welcome.dispose();
+        ui = new Messaging(this);
+        ui.setUsername(getUsername());
+    }
+
+    public void loginFailure() {
+        if (welcome != null) {
+            welcome.setText("Login unsuccessful");
         }
     }
+
 
     public void logout() {
         ui.dispose();
         sendMessage("///LOGGING_OUT");
-        login = new Login(this);
+        welcome = new Welcome(this);
         user = null;
 
     }
@@ -178,6 +188,14 @@ public class Controller {
 
     public void setIv(IvParameterSpec iv) {
         this.iv = iv;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void sendMessage(String message) {

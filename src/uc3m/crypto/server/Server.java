@@ -3,6 +3,7 @@ package uc3m.crypto.server;
 import uc3m.crypto.security.AES;
 import uc3m.crypto.security.DH;
 import uc3m.crypto.server.model.Message;
+import uc3m.crypto.server.model.User;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
@@ -39,14 +40,6 @@ public class Server {
         server.start();
     }
 
-    void broadcast(String message) {
-        for (UserThread user : userThreads) {
-            if (user != null) {
-                user.sendMessage(message);
-            }
-        }
-    }
-
     void broadcast(Message message) {
         for (UserThread user : userThreads) {
             if (user != null) {
@@ -58,5 +51,10 @@ public class Server {
     void removeUser(UserThread user) {
         broadcast(new Message("Server", "****  " + user.getUserName() + " has left.  ****", new Date()));
         userThreads.remove(user);
+    }
+
+    public User autentificate(String username, String password) {
+        //HERE COMES THE DATABASE LOGIC
+        return new User(username, password);
     }
 }

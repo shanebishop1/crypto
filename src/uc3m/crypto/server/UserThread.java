@@ -2,9 +2,11 @@ package uc3m.crypto.server;
 
 import uc3m.crypto.security.AES;
 import uc3m.crypto.server.model.Message;
+import uc3m.crypto.server.model.User;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
+import javax.naming.AuthenticationException;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
@@ -16,6 +18,7 @@ public class UserThread extends Thread {
     private Server server;
     private PrintWriter writer;
     private String userName;
+    private User user;
     private final SecretKey key;
     private final IvParameterSpec iv;
 
@@ -34,14 +37,23 @@ public class UserThread extends Thread {
             OutputStream output = socket.getOutputStream();
             writer = new PrintWriter(output, true);
 
-            /*sendMessage(Base64.getEncoder().encodeToString(server.getKey().getEncoded()));
-            sendMessage(Base64.getEncoder().encodeToString(server.getIv().getIV()));*/
-
-            userName = reader.readLine();
-            server.broadcast(new Message("Server", "****  " + userName + " has connected to the server.  ****", new Date()));
             Message clientMessage;
-            String encryptedMessage = reader.readLine();
+            String encryptedMessage = reader.readLine(); //USERNAME
+            String username = AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv);
+            encryptedMessage = reader.readLine(); //PASSWORD
+            String password = AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv);
+            user = server.autentificate(username, password);
+            if (user != null) {
+                sendMessage("ACCEPTED");
+                userName = username;
+                server.broadcast(new Message("Server", "****  " + userName + " has connected to the server.  ****", new Date()));
+            }
+            else {
+                sendMessage("DENIED");
+                throw new AuthenticationException("Unauthorized");
+            }
 
+            encryptedMessage = reader.readLine();
             while (encryptedMessage != null) {
                 try {
                     String plainMessage = AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv);
@@ -67,6 +79,10 @@ public class UserThread extends Thread {
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (AuthenticationException e) {
+            System.out.println(e.getMessage());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -80,7 +96,7 @@ public class UserThread extends Thread {
     }
 
     void sendMessage(String message) {
-        writer.println(message);
+        sendMessage(new Message("Server", message, new Date()));
     }
 
     void sendMessage(Message message) {

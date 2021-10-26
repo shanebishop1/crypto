@@ -24,7 +24,6 @@ public class SendThread extends Thread {
         try {
             OutputStream output = socket.getOutputStream();
             writer = new PrintWriter(output, true);
-            writer.println(controller.getUser().getUsername());
 
         } catch (IOException e) {
             System.out.println("IO Exception: " + e.getMessage());
