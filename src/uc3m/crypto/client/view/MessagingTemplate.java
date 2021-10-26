@@ -17,7 +17,7 @@ public class MessagingTemplate {
     private JScrollBar outScrollbar;
     private JPanel panelNorth;
     private JCheckBox signedModeCheckBox;
-    private JButton logoutButton;
+    private JButton logOutButton;
     private JPanel Settings;
     private JPanel MainPanel;
     private JButton settingsButton;
@@ -83,9 +83,9 @@ public class MessagingTemplate {
         signedModeCheckBox = new JCheckBox();
         signedModeCheckBox.setText("Signed mode");
         panelNorth.add(signedModeCheckBox);
-        logoutButton = new JButton();
-        logoutButton.setText("Logout");
-        panelNorth.add(logoutButton);
+        logOutButton = new JButton();
+        logOutButton.setText("Logout");
+        panelNorth.add(logOutButton);
         settingsButton = new JButton();
         settingsButton.setText("Settings");
         panelNorth.add(settingsButton);

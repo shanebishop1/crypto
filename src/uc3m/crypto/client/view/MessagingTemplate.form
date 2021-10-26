@@ -67,10 +67,10 @@
                   <text value="Signed mode"/>
                 </properties>
               </component>
-              <component id="d9307" class="javax.swing.JButton" binding="logoutButton" default-binding="true">
+              <component id="d9307" class="javax.swing.JButton" binding="logOutButton" default-binding="true">
                 <constraints/>
                 <properties>
-                  <text value="Logout"/>
+                  <text value="Log Out"/>
                 </properties>
               </component>
               <component id="28ea9" class="javax.swing.JButton" binding="settingsButton" default-binding="true">

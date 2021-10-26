@@ -4,10 +4,8 @@ import uc3m.crypto.client.view.Welcome;
 import uc3m.crypto.security.AES;
 import uc3m.crypto.security.DH;
 import uc3m.crypto.security.SHA;
-import uc3m.crypto.server.model.DB;
 import uc3m.crypto.server.model.Message;
 import uc3m.crypto.server.model.User;
-import uc3m.crypto.client.view.Login;
 import uc3m.crypto.client.view.Messaging;
 
 import javax.crypto.SecretKey;
@@ -15,8 +13,6 @@ import javax.crypto.spec.IvParameterSpec;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
-import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Scanner;
@@ -120,6 +116,14 @@ public class Controller {
 
     public void login(String username, String password) {
         setUsername(username);
+        sendMessage("LogMeIn");
+        sendMessage(username);
+        sendMessage(Base64.getEncoder().encodeToString(SHA.digest(password)));
+    }
+
+    public void signUp(String username, String password){
+        setUsername(username);
+        sendMessage("SignMeUp");
         sendMessage(username);
         sendMessage(Base64.getEncoder().encodeToString(SHA.digest(password)));
     }

@@ -2,101 +2,133 @@ package uc3m.crypto.client.view;
 
 import uc3m.crypto.client.controller.Controller;
 
-import java.awt.*;
-import java.awt.event.*;
-
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 
 public class Welcome extends JFrame implements KeyListener {
     private final Controller controller;
-    private final JTextArea out;
+    private final JLabel out;
     private final JTextField username, password, serverHostName, serverPort;
     private final JLabel usernameLabel, passwordLabel, serverHostNameLabel, serverPortLabel;
-    private final JButton loginButton, connectButton;
-    private final JPanel MainPanel, login, signup, connect;
-    public Welcome(Controller controller){
+    private final JButton loginButton, signUpButton, connectButton;
+    private final JPanel MainPanel, login, connect;
+
+    public Welcome(Controller controller) {
         this.controller = controller;
         MainPanel = new JPanel(new CardLayout(0, 0));
         this.add(MainPanel, BorderLayout.CENTER);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
+        Font labelFont16 = new Font(Font.SANS_SERIF, Font.BOLD, 16);
+        Font labelFont14 = new Font(Font.SANS_SERIF, Font.BOLD, 14);
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int halfScreenHeight = (int) (screenSize.height / 2);
+        int halfScreenWidth = (int) (screenSize.width / 2);
+        int frameWidth = 310;
+        int frameHeight = 250;
+
+        this.setBounds(halfScreenWidth - frameWidth / 2, halfScreenHeight - frameHeight / 2, frameWidth, frameHeight);
+        this.setResizable(false);
+
+        out = new JLabel("", SwingConstants.CENTER);
+        out.setFont(labelFont14);
+        this.add(out, BorderLayout.SOUTH);
+
         //CONNECT
         connect = new JPanel(null);
+        connect.setBackground(new Color(24, 24, 24));
 
-        out = new JTextArea(3, 30);
-        out.setLineWrap(true);
-        out.setWrapStyleWord(true);
-        out.setEditable(false);
 
+        serverHostNameLabel = new JLabel("LAN Server IP");
+        serverHostNameLabel.setForeground(Color.white);
+        serverHostNameLabel.setFont(labelFont16);
         serverHostName = new JTextField(25);
-        serverHostNameLabel = new JLabel("Server Host Name");
+        serverHostName.addKeyListener(this);
+
+        serverPortLabel = new JLabel("Server Port");
+        serverPortLabel.setForeground(Color.white);
+        serverPortLabel.setFont(labelFont16);
         serverPort = new JTextField(25);
         serverPort.addKeyListener(this);
-        serverPortLabel = new JLabel("Server Port");
-        connectButton = new JButton("connect");
+
+        connectButton = new JButton("Connect");
         connectButton.addActionListener(e -> connect());
 
-        serverHostNameLabel.setBounds(50,150,100,30);
-        serverPortLabel.setBounds(50,220,100,30);
-        serverHostName.setBounds(150,150,150,30);
-        serverPort.setBounds(150,220,150,30);
-        connectButton.setBounds(50,300,100,30);
-        out.setBounds(50, 370, 250, 60);
-
-        this.add(out, BorderLayout.SOUTH);
+        serverHostNameLabel.setBounds(30, 30, 125, 30);
+        serverHostName.setBounds(155, 30, 125, 30);
+        serverPortLabel.setBounds(30, 80, 125, 30);
+        serverPort.setBounds(155, 80, 125, 30);
+        connectButton.setBounds(30, 135, 250, 50);
 
         connect.add(serverHostNameLabel);
         connect.add(serverHostName);
         connect.add(serverPortLabel);
         connect.add(serverPort);
         connect.add(connectButton);
-        //LOGIN
-        login = new JPanel(null);
 
-        username = new JTextField(25);
+        //LOGIN or SIGNUP
+        login = new JPanel(null);
+        login.setBackground(new Color(24, 24, 24));
+
         usernameLabel = new JLabel("Username");
+        usernameLabel.setForeground(Color.white);
+        usernameLabel.setFont(labelFont16);
+        username = new JTextField(25);
+        username.addKeyListener(this);
+
+        passwordLabel = new JLabel("Password");
+        passwordLabel.setForeground(Color.white);
+        passwordLabel.setFont(labelFont16);
         password = new JPasswordField(25);
         password.addKeyListener(this);
-        passwordLabel = new JLabel("Password");
-        loginButton = new JButton("login");
+
+        loginButton = new JButton("Log In");
         loginButton.addActionListener(e -> login());
 
-        usernameLabel.setBounds(50,150,100,30);
-        passwordLabel.setBounds(50,220,100,30);
-        username.setBounds(150,150,150,30);
-        password.setBounds(150,220,150,30);
+        signUpButton = new JButton("Sign Up");
+        signUpButton.addActionListener(e -> signUp());
+
+        usernameLabel.setBounds(30, 30, 125, 30);
+        username.setBounds(155, 30, 125, 30);
+        passwordLabel.setBounds(30, 80, 125, 30);
+        password.setBounds(155, 80, 125, 30);
         //showPassword.setBounds(150,250,150,30);
-        loginButton.setBounds(50,300,100,30);
+        loginButton.setBounds(30, 135, 115, 50);
+        signUpButton.setBounds(165, 135, 115, 50);
 
         login.add(usernameLabel);
         login.add(username);
         login.add(passwordLabel);
         login.add(password);
         login.add(loginButton);
-
-        signup = new JPanel(null);
+        login.add(signUpButton);
 
         MainPanel.add(connect, "Connect");
         MainPanel.add(login, "Login");
-        this.setBounds(10, 10, 370, 600);
-        this.setVisible(true);
 
+        this.setVisible(true);
         changeCard("Connect");
     }
+
     public void keyPressed(KeyEvent e) {
     }
+
     public void keyReleased(KeyEvent e) {
     }
+
     public void keyTyped(KeyEvent e) {
         if (e.getSource() == password) {
-            if(e.getKeyChar() == (int)'\n'){
+            if (e.getKeyChar() == (int) '\n') {
                 e.consume();
                 login();
             }
         }
         if (e.getSource() == serverPort) {
-            if(e.getKeyChar() == (int)'\n'){
+            if (e.getKeyChar() == (int) '\n') {
                 e.consume();
                 connect();
             }
@@ -104,6 +136,10 @@ public class Welcome extends JFrame implements KeyListener {
     }
     public void login() {
         controller.login(username.getText(), password.getText());
+    }
+
+    public void signUp() {
+        controller.signUp(username.getText(), password.getText());
     }
 
     public void connect() {
