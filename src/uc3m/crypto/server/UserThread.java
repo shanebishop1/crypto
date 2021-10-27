@@ -46,11 +46,11 @@ public class UserThread extends Thread {
 
             encryptedMessage = reader.readLine(); //USERNAME
             receivedMessage = new Message(AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv), key);
-            String username = AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv);
+            String username = receivedMessage.getContent();
 
             encryptedMessage = reader.readLine(); //PASSWORD
             receivedMessage = new Message(AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv), key);
-            String password = AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv);
+            String password = receivedMessage.getContent();
             password = SHA.digestToString(password);
             if (isSignUpInstance) user = server.signUp(username, password);
             else user = server.authenticate(username, password);
