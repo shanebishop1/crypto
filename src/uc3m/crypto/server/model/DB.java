@@ -1,5 +1,7 @@
 package uc3m.crypto.server.model;
 
+import uc3m.crypto.security.SHA;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,8 +24,8 @@ public class DB implements Serializable {
         usernames.add("Server");
         usernames.add("Shane");
         usernames.add("Lukas");
-        users.add(new User("Lukas", "FI3pxaekTRnlbNmuGlVL9nhHr7DFj24S+imsfd/KmUA=")); //hashed password "p" (Top secret)
-        users.add(new User("Shane", "FI3pxaekTRnlbNmuGlVL9nhHr7DFj24S+imsfd/KmUA="));
+        users.add(new User("Lukas", SHA.digestToString("FI3pxaekTRnlbNmuGlVL9nhHr7DFj24S+imsfd/KmUA="))); //hashed password "p" (Top secret)
+        users.add(new User("Shane", SHA.digestToString("FI3pxaekTRnlbNmuGlVL9nhHr7DFj24S+imsfd/KmUA=")));
     }
 
     public static void saveDatabase(DB database) { //saves the DB into a no extension file

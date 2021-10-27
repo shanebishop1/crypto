@@ -2,6 +2,7 @@ package uc3m.crypto.security;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 public class SHA { //SHA helper funcion
     public static byte[] digest(String text) { //wrapper for generating SHA-256 hash
@@ -13,5 +14,9 @@ public class SHA { //SHA helper funcion
             System.out.println(ex.getMessage());
         }
         return null;
+    }
+
+    public static String digestToString(String text) {
+        return Base64.getEncoder().encodeToString(digest(text));
     }
 }

@@ -1,6 +1,7 @@
 package uc3m.crypto.server;
 
 import uc3m.crypto.security.AES;
+import uc3m.crypto.security.SHA;
 import uc3m.crypto.server.model.Message;
 import uc3m.crypto.server.model.User;
 
@@ -45,6 +46,7 @@ public class UserThread extends Thread {
             String username = AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv);
             encryptedMessage = reader.readLine(); //PASSWORD
             String password = AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv);
+            password = SHA.digestToString(password);
             if (isSignUpInstance) user = server.signUp(username, password);
             else user = server.authenticate(username, password);
 
