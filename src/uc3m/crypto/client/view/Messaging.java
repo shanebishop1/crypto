@@ -27,6 +27,8 @@ public class Messaging extends JFrame implements KeyListener {
     private JTextField hostname;
     private JButton applyButton;
     private JButton exitButton;
+    private JPanel outWrapper;
+    private JScrollPane outScrollable;
 
     public Messaging(Controller controller) {
         this.controller = controller;
@@ -51,9 +53,17 @@ public class Messaging extends JFrame implements KeyListener {
         Messages = new JPanel();
         Messages.setLayout(new BorderLayout(0, 0));
         MainPanel.add(Messages, "Messages");
+        outWrapper = new JPanel(new BorderLayout());
+        outScrollable = new JScrollPane(outWrapper, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
+        );
+        outScrollable.getVerticalScrollBar().setUnitIncrement(16);
         out = new JTextArea();
         out.setEditable(false);
-        Messages.add(out, BorderLayout.CENTER);
+        out.setWrapStyleWord(true);
+        out.setLineWrap(true);
+        outWrapper.add(out, BorderLayout.CENTER);
+        Messages.add(outScrollable, BorderLayout.CENTER);
         contacts = new JList();
         contacts.setPreferredSize(new Dimension(100, 0));
         Messages.add(contacts, BorderLayout.WEST);
@@ -72,8 +82,8 @@ public class Messaging extends JFrame implements KeyListener {
         usernameLabel = new JLabel();
         usernameLabel.setText("Username:");
         panelSouth.add(usernameLabel, BorderLayout.WEST);
-        outScrollbar = new JScrollBar();
-        Messages.add(outScrollbar, BorderLayout.EAST);
+        /*outScrollbar = new JScrollBar();
+        Messages.add(outScrollbar, BorderLayout.EAST);*/
         panelNorth = new JPanel();
         panelNorth.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         Messages.add(panelNorth, BorderLayout.NORTH);
@@ -154,13 +164,13 @@ public class Messaging extends JFrame implements KeyListener {
     }
 
     public void applySettings() {
-        try {
+        /*try {
             controller.setTargetPort(Integer.parseInt(targetPort.getText()));
         } catch (NumberFormatException ex) {
             System.out.println(ex.getMessage());
         }
         controller.setTargetHostName(hostname.getText());
-        controller.connectServer(false);
+        controller.connectServer(false);*/
     }
 
     public void setUsername(String username) {

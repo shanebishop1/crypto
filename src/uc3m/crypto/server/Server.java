@@ -62,6 +62,11 @@ public class Server {
 
     public User authenticate(String username, String hashedPassword) {
         if (database.getUsernames().contains(username)) {
+            for (UserThread userThread : userThreads) {
+                if (userThread.getUserName() != null && userThread.getUserName().equals(username)) {
+                    return null;
+                }
+            }
             for (User user : database.getUsers()) {
                 if (user.getUsername().equals(username) && user.getPassword().equals(hashedPassword)) {
                     return user;

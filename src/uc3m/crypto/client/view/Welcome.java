@@ -48,12 +48,14 @@ public class Welcome extends JFrame implements KeyListener {
         serverHostNameLabel.setFont(labelFont16);
         serverHostName = new JTextField(25);
         serverHostName.addKeyListener(this);
+        serverHostName.setText("localhost");
 
         serverPortLabel = new JLabel("Server Port");
         serverPortLabel.setForeground(Color.white);
         serverPortLabel.setFont(labelFont16);
         serverPort = new JTextField(25);
         serverPort.addKeyListener(this);
+        serverPort.setText("5505");
 
         connectButton = new JButton("Connect");
         connectButton.addActionListener(e -> connect());
