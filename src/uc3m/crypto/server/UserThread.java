@@ -37,14 +37,19 @@ public class UserThread extends Thread {
             OutputStream output = socket.getOutputStream();
             writer = new PrintWriter(output, true);
 
-            Message clientMessage;
+            Message clientMessage, receivedMessage;
             boolean isSignUpInstance = false;
             String encryptedMessage = reader.readLine(); //INITIAL INSTRUCTION, for login or sign up
-            String initialInstruction = AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv);
+            receivedMessage = new Message(AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv), key); //checking HMAC
+            String initialInstruction = receivedMessage.getContent();
             if (initialInstruction.equals("SignMeUp")) isSignUpInstance = true;
+
             encryptedMessage = reader.readLine(); //USERNAME
+            receivedMessage = new Message(AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv), key);
             String username = AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv);
+
             encryptedMessage = reader.readLine(); //PASSWORD
+            receivedMessage = new Message(AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv), key);
             String password = AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv);
             password = SHA.digestToString(password);
             if (isSignUpInstance) user = server.signUp(username, password);
@@ -68,7 +73,8 @@ public class UserThread extends Thread {
             encryptedMessage = reader.readLine();
             while (encryptedMessage != null) { //main Thread loop
                 try {
-                    String plainMessage = AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv); //decrypt
+                    receivedMessage = new Message(AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv), key); //decrypt
+                    String plainMessage = receivedMessage.getContent();
                     if (plainMessage.equals("///LOGGING_OUT")) {
                         break;
                     }
@@ -119,10 +125,14 @@ public class UserThread extends Thread {
 
     void sendMessage(Message message) { //encrypt and send message
         try {
-            String encryptedMessage = AES.encrypt("AES/CBC/PKCS5Padding", message.toString(), key, iv);
+            String encryptedMessage = AES.encrypt("AES/CBC/PKCS5Padding", message.setHmac(getKey()).toString(), key, iv);
             writer.println(encryptedMessage);
         } catch (Exception ex) {
             System.out.println("Server decryption: " + ex.getMessage());
         }
+    }
+
+    public SecretKey getKey() {
+        return key;
     }
 }

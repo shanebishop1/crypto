@@ -34,9 +34,9 @@ public class ReceiveThread extends Thread { //A parallel thread for receiving me
                 if (response == null) {
                     break; //each break ends the loop and therefore terminates the thread
                 }
-                try {
+                try { //AES decryption
                     String plainMsg = AES.decrypt("AES/CBC/PKCS5Padding", response, controller.getKey(), controller.getIv());
-                    Message msg = new Message(plainMsg); //AES decryption
+                    Message msg = new Message(plainMsg, controller.getKey());
                     if (msg.getSender().equals("Server")) {
                         switch (msg.getContent()) { //special server messages
                             case "ACCEPTED", "SIGNED UP" -> controller.loginSuccess();
