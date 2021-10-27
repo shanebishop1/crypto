@@ -55,9 +55,9 @@ public class Server { //Central server, hosts all clients in one chat room
     }
 
     void removeUser(UserThread user) { //removes the specific UserThread, messages other users
-        if (user.getUserName() != null)
-            broadcast(new Message("Server", "****  " + user.getUserName() + " has left.  ****", new Date()));
-        userThreads.remove(user);
+        String username = user.getUserName();
+        if (userThreads.remove(user) && user.getUserName() != null)
+            broadcast(new Message("Server", "****  " + username + " has left.  ****", new Date()));
     }
 
     public User authenticate(String username, String hashedPassword) { //login authentification
