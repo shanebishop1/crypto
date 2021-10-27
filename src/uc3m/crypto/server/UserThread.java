@@ -25,7 +25,7 @@ public class UserThread extends Thread {
         this.socket = socket;
         this.server = server;
         key = AES.generateKeyFromSecret(secret);
-        iv = AES.generateIvFromSecret(secret);
+        iv = AES.generateIvFromSecret(secret); //generates AES parameters from the Diffie Hellman generated secret
     }
 
     public void run() {
@@ -38,7 +38,7 @@ public class UserThread extends Thread {
 
             Message clientMessage;
             boolean isSignUpInstance = false;
-            String encryptedMessage = reader.readLine();
+            String encryptedMessage = reader.readLine(); //INITIAL INSTRUCTION, for login or sign up
             String initialInstruction = AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv);
             if (initialInstruction.equals("SignMeUp")) isSignUpInstance = true;
             encryptedMessage = reader.readLine(); //USERNAME
@@ -48,14 +48,14 @@ public class UserThread extends Thread {
             if (isSignUpInstance) user = server.signUp(username, password);
             else user = server.authenticate(username, password);
 
-            if (user != null) {
-                if (isSignUpInstance) sendMessage("SIGNED UP");
+            if (user != null) { //success
+                if (isSignUpInstance) sendMessage("SIGNED UP"); //info for the user, that they have been successful
                 else sendMessage("ACCEPTED");
                 userName = username;
                 server.broadcast(new Message("Server", "****  " + userName + " has connected to the server.  ****", new Date()));
-            } else {
+            } else { //info for the user, that they have NOT been successful
                 if (isSignUpInstance) {
-                    sendMessage("INVALID SIGNUP");
+                    sendMessage("INVALID SIGNUP"); //these messages are just information for the user, they still get removed serverside
                     throw new AuthenticationException("Invalid signup");
                 } else {
                     sendMessage("DENIED");
@@ -64,12 +64,13 @@ public class UserThread extends Thread {
             }
 
             encryptedMessage = reader.readLine();
-            while (encryptedMessage != null) {
+            while (encryptedMessage != null) { //main Thread loop
                 try {
-                    String plainMessage = AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv);
+                    String plainMessage = AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv); //decrypt
                     if (plainMessage.equals("///LOGGING_OUT")) {
                         break;
                     }
+                    //create message object, only the server can objectively say that it is truly the user with the userName
                     clientMessage = new Message(userName, plainMessage, new Date());
                     server.broadcast(clientMessage);
                 } catch (Exception ex) {
@@ -84,11 +85,11 @@ public class UserThread extends Thread {
                     break;
                 }
             }
-            server.removeUser(this);
+            server.removeUser(this); //on thread finish
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (AuthenticationException e) {
+        } catch (AuthenticationException e) { //the user gets removed here in the case of denial of access because of authentication
             server.removeUser(this);
             try {
                 socket.close();
@@ -114,7 +115,7 @@ public class UserThread extends Thread {
         sendMessage(new Message("Server", message, new Date()));
     }
 
-    void sendMessage(Message message) {
+    void sendMessage(Message message) { //encrypt and send message
         try {
             String encryptedMessage = AES.encrypt("AES/CBC/PKCS5Padding", message.toString(), key, iv);
             writer.println(encryptedMessage);

@@ -14,7 +14,7 @@ import java.security.KeyPairGenerator;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 
-public class DH {
+public class DH { //Diffie Hellman helper class
     public DH() {
 
     }
@@ -39,38 +39,33 @@ public class DH {
         return null;
     }
 
-    public byte[] initFirstToSend(Socket socket) throws Exception {
+    public byte[] initFirstToSend(Socket socket) throws Exception { //Diffie Hellman through a socket
         OutputStream output = socket.getOutputStream();
         ObjectOutputStream oout = new ObjectOutputStream(output);
         InputStream input = socket.getInputStream();
-        ObjectInputStream oin = new ObjectInputStream(input);
+        ObjectInputStream oin = new ObjectInputStream(input); //Input, Output streams
 
         KeyPairGenerator aliceKpairGen = KeyPairGenerator.getInstance("DH");
-        aliceKpairGen.initialize(2048);
-        KeyPair aliceKpair = aliceKpairGen.generateKeyPair();
+        aliceKpairGen.initialize(2048); //initialize DH with 2048 keysize
+        KeyPair aliceKpair = aliceKpairGen.generateKeyPair(); //Alice's key pair
 
         KeyAgreement aliceKeyAgree = KeyAgreement.getInstance("DH");
-        aliceKeyAgree.init(aliceKpair.getPrivate());
+        aliceKeyAgree.init(aliceKpair.getPrivate()); //alices key agreement, initialized with her privateKey, will be used later
 
         byte[] alicePubKeyEnc = aliceKpair.getPublic().getEncoded();
 
-        /*dout.writeInt(alicePubKeyEnc.length);
-        dout.write(alicePubKeyEnc);*/
+        oout.writeObject(alicePubKeyEnc); //Alice sends her public key to Bob
 
-        oout.writeObject(alicePubKeyEnc);
         //System.out.println("Alice Public Key: " + new String(alicePubKeyEnc, StandardCharsets.US_ASCII) + ", Length: " + alicePubKeyEnc.length);
 
-        /*int length = din.readInt();
-        byte[] bobPubKeyEnc = new byte[length];
-        din.readFully(bobPubKeyEnc, 0, bobPubKeyEnc.length); // read the message*/
-        byte[] bobPubKeyEnc = (byte[]) oin.readObject();
+        byte[] bobPubKeyEnc = (byte[]) oin.readObject(); //alice receives Bob's public key as encoded bytes
 
         KeyFactory aliceKeyFac = KeyFactory.getInstance("DH");
-        X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(bobPubKeyEnc);
-        PublicKey bobPubKey = aliceKeyFac.generatePublic(x509KeySpec);
-        aliceKeyAgree.doPhase(bobPubKey, true);
+        X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(bobPubKeyEnc); //Bob's key is created with the same p and q parameters
+        PublicKey bobPubKey = aliceKeyFac.generatePublic(x509KeySpec); //decode Bob's public key
+        aliceKeyAgree.doPhase(bobPubKey, true); //perform the power and modulo operations of Diffie Hellman
 
-        byte[] aliceSharedSecret = aliceKeyAgree.generateSecret();
+        byte[] aliceSharedSecret = aliceKeyAgree.generateSecret(); //the secret is generated :)
 
         //System.out.println("Alice: " + new String(aliceSharedSecret, StandardCharsets.US_ASCII));
 
@@ -83,10 +78,6 @@ public class DH {
         InputStream input = socket.getInputStream();
         ObjectInputStream oin = new ObjectInputStream(input);
 
-        /*int length = din.readInt();
-        byte[] alicePubKeyEnc = new byte[length];
-        din.readFully(alicePubKeyEnc, 0, alicePubKeyEnc.length); // read the message*/
-
         byte[] alicePubKeyEnc = (byte[]) oin.readObject();
 
         //System.out.println("Alice Public Key received by Bob: " + new String(alicePubKeyEnc, StandardCharsets.US_ASCII) + ", Length: " + alicePubKeyEnc.length);
@@ -94,26 +85,24 @@ public class DH {
         KeyFactory bobKeyFac = KeyFactory.getInstance("DH");
         X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(alicePubKeyEnc);
 
-        PublicKey alicePubKey = bobKeyFac.generatePublic(x509KeySpec);
+        PublicKey alicePubKey = bobKeyFac.generatePublic(x509KeySpec); //regenerates Alice's public key
 
-        DHParameterSpec dhParamFromAlicePubKey = ((DHPublicKey) alicePubKey).getParams();
+        DHParameterSpec dhParamFromAlicePubKey = ((DHPublicKey) alicePubKey).getParams(); //gets the p and q params from Alice
 
         KeyPairGenerator bobKpairGen = KeyPairGenerator.getInstance("DH");
         bobKpairGen.initialize(dhParamFromAlicePubKey);
-        KeyPair bobKpair = bobKpairGen.generateKeyPair();
+        KeyPair bobKpair = bobKpairGen.generateKeyPair();//generates his own keys, but it's mathematically connected to Alice's
 
         KeyAgreement bobKeyAgree = KeyAgreement.getInstance("DH");
         bobKeyAgree.init(bobKpair.getPrivate());
 
         byte[] bobPubKeyEnc = bobKpair.getPublic().getEncoded();
 
-        /*dout.writeInt(bobPubKeyEnc.length);
-        dout.write(bobPubKeyEnc);*/
         oout.writeObject(bobPubKeyEnc);
 
         bobKeyAgree.doPhase(alicePubKey, true);
 
-        byte[] bobSharedSecret = bobKeyAgree.generateSecret();
+        byte[] bobSharedSecret = bobKeyAgree.generateSecret(); //secret generated
 
         //System.out.println("Bob: " + new String(bobSharedSecret, StandardCharsets.US_ASCII));
 

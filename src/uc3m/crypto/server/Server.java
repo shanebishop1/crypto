@@ -12,12 +12,12 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Server {
-    private Set<UserThread> userThreads = new HashSet<>();
-    private DB database;
+public class Server { //Central server, hosts all clients in one chat room
+    private Set<UserThread> userThreads = new HashSet<>(); //one thread per user
+    private DB database; //DB for storing users, message history
 
     public Server() {
-        database = DB.loadDatabase("src/uc3m/crypto/server/model/databaseFile");
+        database = DB.loadDatabase("./databaseFile");
         DB.saveDatabase(database);
     }
 
@@ -26,7 +26,7 @@ public class Server {
         server.start();
     }
 
-    public void start() {
+    public void start() { //server listens on the socket and for each user creates new UserThread
         try (ServerSocket serverSocket = new ServerSocket(5505)) {
             while (true) {
                 Socket socket = serverSocket.accept();
@@ -44,7 +44,7 @@ public class Server {
         }
     }
 
-    void broadcast(Message message) {
+    void broadcast(Message message) { //sends a message to all users
         database.getHistory().add(message);
         DB.saveDatabase(database);
         for (UserThread user : userThreads) {
@@ -54,20 +54,20 @@ public class Server {
         }
     }
 
-    void removeUser(UserThread user) {
+    void removeUser(UserThread user) { //removes the specific UserThread, messages other users
         if (user.getUserName() != null)
             broadcast(new Message("Server", "****  " + user.getUserName() + " has left.  ****", new Date()));
         userThreads.remove(user);
     }
 
-    public User authenticate(String username, String hashedPassword) {
-        if (database.getUsernames().contains(username)) {
-            for (UserThread userThread : userThreads) {
+    public User authenticate(String username, String hashedPassword) { //login authentification
+        if (database.getUsernames().contains(username)) { //check if username present
+            for (UserThread userThread : userThreads) { //check if user already in the server
                 if (userThread.getUserName() != null && userThread.getUserName().equals(username)) {
                     return null;
                 }
             }
-            for (User user : database.getUsers()) {
+            for (User user : database.getUsers()) { //check for correct password
                 if (user.getUsername().equals(username) && user.getPassword().equals(hashedPassword)) {
                     return user;
                 }
@@ -77,8 +77,8 @@ public class Server {
         return null;
     }
 
-    public User signUp(String username, String hashedPassword) {
-        if (database.getUsernames().contains(username) || username.isBlank()) return null;
+    public User signUp(String username, String hashedPassword) { //signup logic
+        if (database.getUsernames().contains(username) || username.isBlank()) return null; //user already signed up or username empty
         User createdUser = new User(username, hashedPassword);
         database.getUsernames().add(username);
         database.getUsers().add(createdUser);

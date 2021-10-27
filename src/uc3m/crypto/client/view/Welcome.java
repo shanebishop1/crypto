@@ -16,7 +16,7 @@ public class Welcome extends JFrame implements KeyListener {
     private final JButton loginButton, signUpButton, connectButton;
     private final JPanel MainPanel, login, connect;
 
-    public Welcome(Controller controller) {
+    public Welcome(Controller controller) { //Welcome screen with 2 cards: Connect and Login
         this.controller = controller;
         MainPanel = new JPanel(new CardLayout(0, 0));
         this.add(MainPanel, BorderLayout.CENTER);
@@ -123,7 +123,7 @@ public class Welcome extends JFrame implements KeyListener {
     public void keyReleased(KeyEvent e) {
     }
 
-    public void keyTyped(KeyEvent e) {
+    public void keyTyped(KeyEvent e) { //key listeners for submitting with ENTER
         if (e.getSource() == password) {
             if (e.getKeyChar() == (int) '\n') {
                 e.consume();
@@ -146,7 +146,7 @@ public class Welcome extends JFrame implements KeyListener {
         controller.signUp(username.getText(), password.getText());
     }
 
-    public void connect() {
+    public void connect() { //wrapper for controller.connectServer, sets the connection parameters
         controller.setTargetHostName(serverHostName.getText());
         try {
             controller.setTargetPort(Integer.parseInt(serverPort.getText()));
@@ -172,7 +172,7 @@ public class Welcome extends JFrame implements KeyListener {
 
     public void changeCard(String card) {
         ((CardLayout) (MainPanel.getLayout())).show(MainPanel, card);
-    }
+    } //for changing view
 
     public JTextField getUsernameField() {
         return this.username;

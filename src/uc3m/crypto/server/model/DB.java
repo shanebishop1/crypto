@@ -22,11 +22,11 @@ public class DB implements Serializable {
         usernames.add("Server");
         usernames.add("Shane");
         usernames.add("Lukas");
-        users.add(new User("Lukas", "FI3pxaekTRnlbNmuGlVL9nhHr7DFj24S+imsfd/KmUA="));
+        users.add(new User("Lukas", "FI3pxaekTRnlbNmuGlVL9nhHr7DFj24S+imsfd/KmUA=")); //hashed password "p" (Top secret)
         users.add(new User("Shane", "FI3pxaekTRnlbNmuGlVL9nhHr7DFj24S+imsfd/KmUA="));
     }
 
-    public static void saveDatabase(DB database) {
+    public static void saveDatabase(DB database) { //saves the DB into a no extension file
         try {
             ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(database.getFilePath()));
             outputStream.writeObject(database);
@@ -40,10 +40,10 @@ public class DB implements Serializable {
         for (Message m : database.getHistory()) System.out.println(m.toUIString());
     }
 
-    public static DB loadDatabase(String path) {
+    public static DB loadDatabase(String path) { //loads database from a file
         try {
             ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(path));
-            DB database = (DB) inputStream.readObject();
+            DB database = (DB) inputStream.readObject(); //using very useful java ObjectStreams, a very nice feature for serialization
             inputStream.close();
             return database;
         } catch (FileNotFoundException e) {

@@ -9,7 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
-public class ReceiveThread extends Thread {
+public class ReceiveThread extends Thread { //A parallel thread for receiving messages
     private BufferedReader reader;
     private Socket socket;
     private Controller controller;
@@ -19,7 +19,7 @@ public class ReceiveThread extends Thread {
         this.controller = controller;
         try {
             InputStream input = socket.getInputStream();
-            reader = new BufferedReader(new InputStreamReader(input));
+            reader = new BufferedReader(new InputStreamReader(input)); //reader for reading strings from socketInputStream
         } catch (IOException e) {
             this.controller.getUI().writeLine("IO Exception: " + e.getMessage());
             System.out.println("IO Exception: " + e.getMessage());
@@ -28,17 +28,17 @@ public class ReceiveThread extends Thread {
     }
 
     public void run() {
-        while (true) {
+        while (true) { //main Thread loop
             try {
                 String response = reader.readLine();
                 if (response == null) {
-                    break;
+                    break; //each break ends the loop and therefore terminates the thread
                 }
                 try {
                     String plainMsg = AES.decrypt("AES/CBC/PKCS5Padding", response, controller.getKey(), controller.getIv());
-                    Message msg = new Message(plainMsg);
+                    Message msg = new Message(plainMsg); //AES decryption
                     if (msg.getSender().equals("Server")) {
-                        switch (msg.getContent()) {
+                        switch (msg.getContent()) { //special server messages
                             case "ACCEPTED", "SIGNED UP" -> controller.loginSuccess();
                             case "INVALID SIGNUP" -> controller.signUpFailure();
                             case "DENIED" -> controller.loginFailure();

@@ -37,18 +37,16 @@ public class Controller {
         random = new Random();
         welcome = new Welcome(this);
 
+        //default settings
         targetHostName = "localhost";
         targetPort = 5505;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) { //Main client function
         Controller controller = new Controller();
-
-        Message msg = new Message("King", "Hello world", new Date());
-        Message msg2 = new Message(msg.toString());
     }
 
-    public void connectServer(boolean maintainLabel) {
+    public void connectServer(boolean maintainLabel) { //start a thread for connecting to the server
         if (connectThread != null) {
             connectThread.interrupt();
         }
@@ -56,7 +54,7 @@ public class Controller {
         connectThread.start();
     }
 
-    public void writeLine(String text) {
+    public void writeLine(String text) { //forwards writeLine to the active user interface
         if (ui != null) {
             ui.writeLine(text);
         } else if (welcome != null) {
@@ -64,7 +62,7 @@ public class Controller {
         }
     }
 
-    public void login(String username, String password) {
+    public void login(String username, String password) { //login sequence
         setUsername(username);
         sendMessage("LogMeIn");
         sendMessage(username);
@@ -85,7 +83,7 @@ public class Controller {
         }
     }
 
-    public void logout() {
+    public void logout() { //logout sequence
         ui.dispose();
         sendMessage("///LOGGING_OUT");
         welcome = new Welcome(this);
@@ -93,7 +91,7 @@ public class Controller {
 
     }
 
-    public void signUp(String username, String password) {
+    public void signUp(String username, String password) { //signup sequence
         setUsername(username);
         sendMessage("SignMeUp");
         sendMessage(username);
@@ -166,7 +164,7 @@ public class Controller {
         }
     }
 
-    class ConnectServer extends Thread {
+    class ConnectServer extends Thread { //helper class, thread for retrying the connection to the server
         private Controller controller;
         private boolean maintainLabel;
 
@@ -178,17 +176,17 @@ public class Controller {
         public void run() {
             try {
                 Socket socket = new Socket(targetHostName, targetPort);
-                DH dh = new DH();
-                byte[] secret = dh.init(socket, false);
+                DH dh = new DH(); //Diffie Hellman
+                byte[] secret = dh.init(socket, false); //Server executes this too, the result is a shared secret
                 //System.out.println(secret);
                 key = AES.generateKeyFromSecret(secret);
-                iv = AES.generateIvFromSecret(secret);
-                if (!maintainLabel) {
+                iv = AES.generateIvFromSecret(secret); //key and iv for future AES use
+                if (!maintainLabel) { //if the window should change to login
                     welcome.changeCard("Login");
                     writeLine("Connected to server.");
                 }
-                new ReceiveThread(socket, controller).start();
-                sendThread = new SendThread(socket, controller);
+                new ReceiveThread(socket, controller).start(); //Thread for receiving messages
+                sendThread = new SendThread(socket, controller); //sending messages, does not have to be a new thread
                 welcome.getUsernameField().requestFocusInWindow();
             } catch (UnknownHostException e) {
                 writeLine("Unknown Host: " + e.getMessage());
