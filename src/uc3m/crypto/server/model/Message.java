@@ -69,7 +69,8 @@ public class Message implements Serializable {
     }
 
     public String getHmacString(SecretKey key) { //get HMAC value of the message as Base64 string
-        return Base64.getEncoder().encodeToString(SHA.digest(this.toStringWithoutHmac()+Base64.getEncoder().encodeToString(key.getEncoded())));
+        return Base64.getEncoder().encodeToString(SHA.digest(this.toStringWithoutHmac()
+                + Base64.getEncoder().encodeToString(key.getEncoded())));
     }
     public boolean checkHmac(SecretKey key) { //check if the newly generated HMAC equals to the saved one, integrity check
         if (getHmacString(key).equals(hmac)) {

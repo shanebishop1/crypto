@@ -38,11 +38,12 @@ public class AES { //AES helper class
 
     //key generation from a secret
     public static SecretKey generateKeyFromSecret(byte[] secret) {
-        SecretKeySpec key = new SecretKeySpec(secret, 0, 16, "AES");
+        //len: 32 for AES-256 and len: 16 for AES-128
+        SecretKeySpec key = new SecretKeySpec(secret, 0, 32, "AES");
         return key;
     }
 
-    //same as for key, we want to generate it from a secret
+    //same as for key, we want to generate it from a secret, so not used
     public static IvParameterSpec generateIv() {
         byte[] iv = new byte[16];
         new SecureRandom().nextBytes(iv);

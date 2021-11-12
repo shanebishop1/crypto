@@ -1,6 +1,7 @@
 package uc3m.crypto.server;
 
 import uc3m.crypto.security.AES;
+import uc3m.crypto.security.PBKDF2;
 import uc3m.crypto.security.SHA;
 import uc3m.crypto.server.model.Message;
 import uc3m.crypto.server.model.User;
@@ -51,9 +52,20 @@ public class UserThread extends Thread {
             encryptedMessage = reader.readLine(); //PASSWORD
             receivedMessage = new Message(AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv), key);
             String password = receivedMessage.getContent();
-            password = SHA.digestToString(password);
-            if (isSignUpInstance) user = server.signUp(username, password);
-            else user = server.authenticate(username, password);
+            if (isSignUpInstance) {
+                long start = System.currentTimeMillis();
+                user = server.signUp(username, password);
+                long finish = System.currentTimeMillis();
+                long timeElapsed = finish - start;
+                System.out.println("Sign up server execution time: " + timeElapsed + "ms");
+            }
+            else {
+                long start = System.currentTimeMillis();
+                user = server.authenticate(username, password);
+                long finish = System.currentTimeMillis();
+                long timeElapsed = finish - start;
+                System.out.println("Login server execution time: " + timeElapsed + "ms");
+            }
 
             if (user != null) { //success
                 if (isSignUpInstance) sendMessage("SIGNED UP"); //info for the user, that they have been successful

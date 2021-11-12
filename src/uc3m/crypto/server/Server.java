@@ -1,6 +1,7 @@
 package uc3m.crypto.server;
 
 import uc3m.crypto.security.DH;
+import uc3m.crypto.security.PBKDF2;
 import uc3m.crypto.server.model.DB;
 import uc3m.crypto.server.model.Message;
 import uc3m.crypto.server.model.User;
@@ -67,10 +68,12 @@ public class Server { //Central server, hosts all clients in one chat room
                     return null;
                 }
             }
-            for (User user : database.getUsers()) { //check for correct password
-                if (user.getUsername().equals(username) && user.getPassword().equals(hashedPassword)) {
-                    return user;
-                }
+            User user = database.getUsers().get(username);
+            if (user == null) {
+                return null;
+            }
+            if ( PBKDF2.defaultHash(hashedPassword, user.getSalt()).equals(user.getPassword()) ) {
+                return user;
             }
             return null;
         }
@@ -79,9 +82,11 @@ public class Server { //Central server, hosts all clients in one chat room
 
     public User signUp(String username, String hashedPassword) { //signup logic
         if (database.getUsernames().contains(username) || username.isBlank()) return null; //user already signed up or username empty
-        User createdUser = new User(username, hashedPassword);
+        String salt = PBKDF2.generateSalt();
+        hashedPassword = PBKDF2.defaultHash(hashedPassword, salt);
+        User createdUser = new User(username, hashedPassword, salt);
         database.getUsernames().add(username);
-        database.getUsers().add(createdUser);
+        database.getUsers().put(username, createdUser);
         DB.saveDatabase(database);
         return createdUser;
     }

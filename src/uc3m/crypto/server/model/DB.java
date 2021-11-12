@@ -1,31 +1,29 @@
 package uc3m.crypto.server.model;
 
+import uc3m.crypto.security.PBKDF2;
 import uc3m.crypto.security.SHA;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class DB implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     String filePath;
     Set<String> usernames;
-    List<User> users;
+    HashMap<String, User> users;
     List<Message> history;
 
     public DB(String databasePath) {
         filePath = databasePath;
         usernames = new HashSet<String>();
-        users = new ArrayList<User>();
+        users = new HashMap<>();
         history = new ArrayList<Message>();
         usernames.add("Server");
         usernames.add("Shane");
         usernames.add("Lukas");
-        users.add(new User("Lukas", SHA.digestToString("FI3pxaekTRnlbNmuGlVL9nhHr7DFj24S+imsfd/KmUA="))); //hashed password "p" (Top secret)
-        users.add(new User("Shane", SHA.digestToString("FI3pxaekTRnlbNmuGlVL9nhHr7DFj24S+imsfd/KmUA=")));
+        users.put("Lukas", new User("Lukas", PBKDF2.defaultHash(SHA.digestToString("p"), "salt"), "salt")); //hashed password "p" (Top secret)
+        users.put("Shane", new User("Shane", PBKDF2.defaultHash(SHA.digestToString("p"), "salt"), "salt"));
     }
 
     public static void saveDatabase(DB database) { //saves the DB into a no extension file
@@ -60,17 +58,14 @@ public class DB implements Serializable {
     }
 
     public User searchUsernamePassword(String username, String password) {
-        for (User user : users) {
-            if (user != null) {
-                if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
-                    return user;
-                }
-            }
+        User user = users.get(username);
+        if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
+            return user;
         }
         return null;
     }
 
-    public List<User> getUsers() {
+    public HashMap<String, User> getUsers() {
         return this.users;
     }
 
