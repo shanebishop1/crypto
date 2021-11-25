@@ -5,6 +5,7 @@ import org.bouncycastle.jcajce.provider.symmetric.ARC4;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
+import java.security.SignatureException;
 import java.util.Base64;
 
 public class RSA {
@@ -22,7 +23,7 @@ public class RSA {
         return null;
     }
 
-    public static boolean verifySignature(String data, PublicKey key, String signature) {
+    public static boolean verifySignature(String data, PublicKey key, String signature){
 
         try {
             Signature sig = Signature.getInstance("SHA256WithRSA");

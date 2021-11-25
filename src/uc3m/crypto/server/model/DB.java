@@ -19,11 +19,11 @@ public class DB implements Serializable {
         usernames = new HashSet<String>();
         users = new HashMap<>();
         history = new ArrayList<Message>();
-        usernames.add("Server");
-        usernames.add("Shane");
-        usernames.add("Lukas");
-        users.put("Lukas", new User("Lukas", PBKDF2.defaultHash(SHA.digestToString("p"), "salt"), "salt")); //hashed password "p" (Top secret)
-        users.put("Shane", new User("Shane", PBKDF2.defaultHash(SHA.digestToString("p"), "salt"), "salt"));
+        usernames.add("server");
+        usernames.add("shane");
+        usernames.add("lukas");
+        users.put("lukas", new User("lukas", PBKDF2.defaultHash(SHA.digestToString("p"), "salt"), "salt")); //hashed password "p" (Top secret)
+        users.put("shane", new User("shane", PBKDF2.defaultHash(SHA.digestToString("p"), "salt"), "salt"));
     }
 
     public static void saveDatabase(DB database) { //saves the DB into a no extension file

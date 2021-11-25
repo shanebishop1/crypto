@@ -43,8 +43,13 @@ public class SendThread extends Thread {
     synchronized public void sendText(String outMsg) { //easy sendText function, encrypts each string sent
         if (outMsg != null && !outMsg.equals("") && !outMsg.isBlank()) {
             try {
+                Message message = new Message(controller.getUsername(), outMsg, new Date()).setHmac(controller.getKey());
+                System.out.println(controller.getKey() != null);
+                if (controller.getKey() != null) {
+                    message.sign(controller.getPrivateKey());
+                }
                 String encMsg = AES.encrypt("AES/CBC/PKCS5Padding",
-                        new Message(controller.getUsername(), outMsg, new Date()).setHmac(controller.getKey()).toString(),
+                        message.toString(),
                         controller.getKey(),
                         controller.getIv());
                 writer.println(encMsg);

@@ -12,6 +12,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import uc3m.crypto.server.model.Message;
 
 import java.io.FileInputStream;
 import java.math.BigInteger;
@@ -138,8 +139,9 @@ public class X509 {
             Path keyPath = Paths.get(path+username+"/"+username+".key.pem");
             String keyFileString = Files.readString(keyPath, StandardCharsets.US_ASCII);
 
-            String privateKeyPem = keyFileString.replace("-----BEGIN RSA PRIVATE KEY-----\n", "");
-            privateKeyPem = privateKeyPem.replace("-----END RSA PRIVATE KEY-----", "");
+            String privateKeyPem = keyFileString.replace("-----BEGIN PRIVATE KEY-----\n", "");
+            privateKeyPem = privateKeyPem.replace("-----END PRIVATE KEY-----", "");
+            privateKeyPem = privateKeyPem.replaceAll("\n", "");
 
             byte[] keyBytes = Base64.getDecoder().decode(privateKeyPem);
 
@@ -155,5 +157,8 @@ public class X509 {
     public static void main(String[] args) {
         X509.setPath("C:\\Users\\lukyb\\Documents\\openssl\\");
         System.out.println(validateCertificate(getUserCertificate("lukas")));
+        Message m = new Message("lukas", "Hello world", new Date());
+        m.sign(loadPrivateKey("lukas"));
+        //System.out.println(m.verifySignature(getUserCertificate("lukas").getPublicKey()));
     }
 }

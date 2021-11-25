@@ -7,6 +7,7 @@ import javax.crypto.SecretKey;
 import java.io.Serializable;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SignatureException;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
@@ -41,6 +42,8 @@ public class Message implements Serializable {
         }
         hmac = message.substring(message.indexOf("hmac") + 6,
                 message.indexOf("'", message.indexOf("hmac") + 6));
+        sig = message.substring(message.indexOf("hmac") + 5,
+                message.indexOf("'", message.indexOf("hmac") + 5));
     }
 
     public Message(String message, SecretKey key) {
@@ -90,6 +93,7 @@ public class Message implements Serializable {
     public String getHash() {
         return Base64.getEncoder().encodeToString(SHA.digest(this.toStringWithoutHmac()));
     }
+
     public void sign(PrivateKey key) {
         setSig(RSA.sign(toStringWithoutHmac(), key));
     }
