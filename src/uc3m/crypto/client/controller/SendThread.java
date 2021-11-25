@@ -44,7 +44,6 @@ public class SendThread extends Thread {
         if (outMsg != null && !outMsg.equals("") && !outMsg.isBlank()) {
             try {
                 Message message = new Message(controller.getUsername(), outMsg, new Date()).setHmac(controller.getKey());
-                System.out.println(controller.getKey() != null);
                 if (controller.getKey() != null) {
                     message.sign(controller.getPrivateKey());
                 }

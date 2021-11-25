@@ -42,8 +42,8 @@ public class Message implements Serializable {
         }
         hmac = message.substring(message.indexOf("hmac") + 6,
                 message.indexOf("'", message.indexOf("hmac") + 6));
-        sig = message.substring(message.indexOf("hmac") + 5,
-                message.indexOf("'", message.indexOf("hmac") + 5));
+        sig = message.substring(message.indexOf("sig") + 5,
+                message.indexOf("'", message.indexOf("sig") + 5));
     }
 
     public Message(String message, SecretKey key) {

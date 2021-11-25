@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.security.SignatureException;
+import java.security.cert.X509Certificate;
 
 public class ReceiveThread extends Thread { //A parallel thread for receiving messages
     private BufferedReader reader;
@@ -47,11 +48,17 @@ public class ReceiveThread extends Thread { //A parallel thread for receiving me
                         }
                     }
                     if (!msg.getSig().equals("")) {
-                        if (!msg.verifySignature(X509.getUserCertificate(msg.getSender()).getPublicKey())) {
-                            controller.writeLine("Signature invalid!");
+                        X509Certificate senderCert = X509.getUserCertificate(msg.getSender());
+                        if (senderCert == null) {
+                            controller.writeLine("Signed but the certificate not found.");
                         }
                         else {
-                            controller.writeLine("Message signed by " + msg.getSender());
+                            if (!msg.verifySignature(senderCert.getPublicKey())) {
+                                controller.writeLine("Signature invalid!");
+                            }
+                            else {
+                                controller.writeLine("Message signed by " + msg.getSender());
+                            }
                         }
                     }
                     if (controller.getUI() != null) controller.getUI().writeLine(msg.toUIString());
