@@ -14,13 +14,13 @@ public class PBKDF2 {
         final char[] passwordChars = password.toCharArray();
         final byte[] saltBytes = salt.getBytes();
         try {
-            SecretKeyFactory skf = SecretKeyFactory.getInstance( "PBKDF2WithHmacSHA512" );
-            PBEKeySpec spec = new PBEKeySpec( passwordChars, saltBytes, iterations, keyLength );
-            SecretKey key = skf.generateSecret( spec );
-            byte[] res = key.getEncoded( );
+            SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
+            PBEKeySpec spec = new PBEKeySpec(passwordChars, saltBytes, iterations, keyLength);
+            SecretKey key = skf.generateSecret(spec);
+            byte[] res = key.getEncoded();
             return res;
         } catch ( NoSuchAlgorithmException | InvalidKeySpecException e ) {
-            throw new RuntimeException( e );
+            throw new RuntimeException(e);
         }
     }
 
