@@ -15,6 +15,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import uc3m.crypto.server.model.Message;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -148,6 +149,8 @@ public class X509 {
             PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return keyFactory.generatePrivate(spec);
+        } catch (IOException ex) {
+            System.out.println("Private key file not found, please import it into your user folder in your default directory.");
         } catch (Exception ex) {
             ex.printStackTrace();
         }

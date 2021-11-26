@@ -5,9 +5,7 @@ import uc3m.crypto.security.AES;
 import uc3m.crypto.server.Server;
 import uc3m.crypto.server.model.Message;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.Date;
 
@@ -44,7 +42,7 @@ public class SendThread extends Thread {
         if (outMsg != null && !outMsg.equals("") && !outMsg.isBlank()) {
             try {
                 Message message = new Message(controller.getUsername(), outMsg, new Date()).setHmac(controller.getKey());
-                if (controller.getKey() != null) {
+                if (controller.getPrivateKey() != null) {
                     message.sign(controller.getPrivateKey());
                 }
                 String encMsg = AES.encrypt("AES/CBC/PKCS5Padding",

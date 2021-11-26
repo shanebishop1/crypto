@@ -11,6 +11,7 @@ import java.util.Base64;
 public class RSA {
     public static String sign(String data, PrivateKey key) {
         try {
+            data = SHA.digestToString(data);
             Signature sig = Signature.getInstance("SHA256WithRSA");
             sig.initSign(key);
             sig.update(data.getBytes());
@@ -26,6 +27,7 @@ public class RSA {
     public static boolean verifySignature(String data, PublicKey key, String signature){
 
         try {
+            data = SHA.digestToString(data);
             Signature sig = Signature.getInstance("SHA256WithRSA");
 
             sig.initVerify(key);

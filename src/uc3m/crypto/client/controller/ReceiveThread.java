@@ -12,6 +12,8 @@ import java.net.Socket;
 import java.security.SignatureException;
 import java.security.cert.X509Certificate;
 
+import static uc3m.crypto.server.model.Message.SignatureStatus.*;
+
 public class ReceiveThread extends Thread { //A parallel thread for receiving messages
     private BufferedReader reader;
     private Socket socket;
@@ -40,28 +42,33 @@ public class ReceiveThread extends Thread { //A parallel thread for receiving me
                 try { //AES decryption
                     String plainMsg = AES.decrypt("AES/CBC/PKCS5Padding", response, controller.getKey(), controller.getIv());
                     Message msg = new Message(plainMsg, controller.getKey());
-                    if (msg.getSender().equals("server")) {
+                    if (msg.getSender().equals("server") && msg.verifySignature(X509.getUserCertificate("server").getPublicKey())) {
                         switch (msg.getContent()) { //special server messages
                             case "ACCEPTED", "SIGNED UP" -> controller.loginSuccess();
                             case "INVALID SIGNUP" -> controller.signUpFailure();
                             case "DENIED" -> controller.loginFailure();
                         }
                     }
+                    Message.SignatureStatus signatureStatus = UNSIGNED;
                     if (!msg.getSig().equals("")) {
                         X509Certificate senderCert = X509.getUserCertificate(msg.getSender());
                         if (senderCert == null) {
-                            controller.writeLine("Signed but the certificate not found.");
+                            //controller.writeLine("Signed but the certificate not found.");
                         }
                         else {
                             if (!msg.verifySignature(senderCert.getPublicKey())) {
-                                controller.writeLine("Signature invalid!");
+                                //controller.writeLine("Signature invalid!");
+                                signatureStatus = SIGNATURE_INVALID;
                             }
                             else {
-                                controller.writeLine("Message signed by " + msg.getSender());
+                                signatureStatus = SIGNATURE_VALID;
                             }
                         }
                     }
-                    if (controller.getUI() != null) controller.getUI().writeLine(msg.toUIString());
+                    else {
+                        signatureStatus = UNSIGNED;
+                    }
+                    if (controller.getUI() != null) controller.getUI().writeLine(msg.toUIString(signatureStatus));
                 } catch (Exception ex) {
                     System.out.println("Receive Error: " + ex.getMessage());
                 }

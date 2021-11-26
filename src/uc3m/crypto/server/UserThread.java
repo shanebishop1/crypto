@@ -71,7 +71,9 @@ public class UserThread extends Thread {
                 if (isSignUpInstance) sendMessage("SIGNED UP"); //info for the user, that they have been successful
                 else sendMessage("ACCEPTED");
                 userName = username;
-                server.broadcast(new Message("server", "****  " + userName + " has connected to the server.  ****", new Date()));
+                Message msg = new Message("server", "****  " + userName + " has connected to the server.  ****", new Date());
+                msg.sign(server.getPrivateKey());
+                server.broadcast(msg);
             } else { //info for the user, that they have NOT been successful
                 if (isSignUpInstance) {
                     sendMessage("INVALID SIGNUP"); //these messages are just information for the user, they still get removed serverside
@@ -133,7 +135,9 @@ public class UserThread extends Thread {
     }
 
     void sendMessage(String message) {
-        sendMessage(new Message("server", message, new Date()));
+        Message msg = new Message("server", message, new Date());
+        msg.sign(server.getPrivateKey());
+        sendMessage(msg);
     }
 
     void sendMessage(Message message) { //encrypt and send message

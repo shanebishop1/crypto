@@ -37,7 +37,7 @@ public class DB implements Serializable {
     }
 
     public static void printHistory(DB database) {
-        for (Message m : database.getHistory()) System.out.println(m.toUIString());
+        for (Message m : database.getHistory()) System.out.println(m.toUIString(Message.SignatureStatus.UNSIGNED));
     }
 
     public static DB loadDatabase(String path) { //loads database from a file
