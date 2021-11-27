@@ -42,7 +42,7 @@ public class SendThread extends Thread {
         if (outMsg != null && !outMsg.equals("") && !outMsg.isBlank()) {
             try {
                 Message message = new Message(controller.getUsername(), outMsg, new Date()).setHmac(controller.getKey());
-                if (controller.getPrivateKey() != null) {
+                if (controller.getPrivateKey() != null && controller.isSignedMode()) {
                     message.sign(controller.getPrivateKey());
                 }
                 String encMsg = AES.encrypt("AES/CBC/PKCS5Padding",

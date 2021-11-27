@@ -20,6 +20,7 @@ public class Messaging extends JFrame implements KeyListener {
     private JLabel usernameLabel;
     private JScrollBar outScrollbar;
     private JPanel panelNorth;
+    private JCheckBox signedModeCheckBox;
     private JButton logoutButton;
     private JPanel Settings;
     private JButton settingsButton;
@@ -87,7 +88,9 @@ public class Messaging extends JFrame implements KeyListener {
         panelNorth = new JPanel();
         panelNorth.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         Messages.add(panelNorth, BorderLayout.NORTH);
-
+        signedModeCheckBox = new JCheckBox();
+        signedModeCheckBox.setText("Signed mode");
+        panelNorth.add(signedModeCheckBox);
         logoutButton = new JButton();
         logoutButton.setText("Logout");
         panelNorth.add(logoutButton);
@@ -146,6 +149,10 @@ public class Messaging extends JFrame implements KeyListener {
             CardLayout cardLayout = (CardLayout) (MainPanel.getLayout());
             cardLayout.show(MainPanel, "Messages");
         });
+        signedModeCheckBox.addChangeListener(e -> {
+            boolean isSelected = ((JCheckBox)e.getSource()).isSelected();
+            controller.setSignedMode(isSelected);
+        });
     }
 
     public void keyPressed(KeyEvent e) {
@@ -190,6 +197,10 @@ public class Messaging extends JFrame implements KeyListener {
         String text = in.getText();
         in.setText("");
         return text;
+    }
+
+    public void setSignedModeCheckboxVisibility(boolean isVisible) {
+        signedModeCheckBox.setVisible(isVisible);
     }
 }
 

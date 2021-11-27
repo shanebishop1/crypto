@@ -37,6 +37,8 @@ public class Controller {
 
     private PrivateKey privateKey;
 
+    private boolean isSignedMode;
+
     public Controller() {
         X509.setPath("C:\\Users\\lukyb\\Documents\\openssl\\");
         random = new Random();
@@ -46,6 +48,8 @@ public class Controller {
         targetHostName = "localhost";
         targetPort = 5505;
         privateKey = null;
+
+        isSignedMode = false;
     }
 
     public static void main(String[] args) { //Main client function
@@ -81,6 +85,7 @@ public class Controller {
         welcome.dispose();
         ui = new Messaging(this);
         ui.setUsername(getUsername());
+        ui.setSignedModeCheckboxVisibility(privateKey != null);
     }
 
     public void loginFailure() {
@@ -163,6 +168,14 @@ public class Controller {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public boolean isSignedMode() {
+        return isSignedMode;
+    }
+
+    public void setSignedMode(boolean signedMode) {
+        isSignedMode = signedMode;
     }
 
     public void sendMessage(String message) {
