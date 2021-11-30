@@ -16,11 +16,11 @@ public class Messaging extends JFrame implements KeyListener {
     private JList contacts;
     private JPanel panelSouth;
     private JButton buttonSend;
-    private JTextField in;
+    private JTextField in, privateMessageReceiver;
     private JLabel usernameLabel;
     private JScrollBar outScrollbar;
     private JPanel panelNorth;
-    private JCheckBox signedModeCheckBox;
+    private JCheckBox signedModeCheckBox, endToEndCheckBox;
     private JButton logoutButton;
     private JPanel Settings;
     private JButton settingsButton;
@@ -91,6 +91,11 @@ public class Messaging extends JFrame implements KeyListener {
         signedModeCheckBox = new JCheckBox();
         signedModeCheckBox.setText("Signed mode");
         panelNorth.add(signedModeCheckBox);
+        privateMessageReceiver = new JTextField();
+        privateMessageReceiver.setColumns(0);
+        privateMessageReceiver.setMinimumSize(new Dimension(50, 30));
+        privateMessageReceiver.setPreferredSize(new Dimension(50, 30));
+        panelNorth.add(privateMessageReceiver);
         logoutButton = new JButton();
         logoutButton.setText("Logout");
         panelNorth.add(logoutButton);
@@ -197,6 +202,21 @@ public class Messaging extends JFrame implements KeyListener {
         String text = in.getText();
         in.setText("");
         return text;
+    }
+
+    public String getPrivateMessageReceiver() {
+        return privateMessageReceiver.getText();
+    }
+
+    public void setPrivateMessageReceiver(String text) {
+        privateMessageReceiver.setText(text);
+    }
+
+    public void scrollDown() { //scroll down the output screen, used when receiving a message
+        if (outScrollable.getVerticalScrollBar() == null)
+            return;
+        JScrollBar vertical = outScrollable.getVerticalScrollBar();
+        vertical.setValue( vertical.getMaximum() );
     }
 
     public void setSignedModeCheckboxVisibility(boolean isVisible) {

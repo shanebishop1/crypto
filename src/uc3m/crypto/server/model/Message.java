@@ -2,15 +2,21 @@ package uc3m.crypto.server.model;
 
 import uc3m.crypto.security.RSA;
 import uc3m.crypto.security.SHA;
+import uc3m.crypto.security.X509;
 
 import javax.crypto.SecretKey;
 import java.io.Serializable;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SignatureException;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
+
+import static uc3m.crypto.server.model.Message.SignatureStatus.*;
+import static uc3m.crypto.server.model.Message.SignatureStatus.UNSIGNED;
 
 public class Message implements Serializable {
     private String sender;
@@ -18,11 +24,13 @@ public class Message implements Serializable {
     private Date dateSent;
     private String hmac;
     private String sig;
+    private String receiver;
 
     public Message(String sender, String content, Date dateSent) {
         this.sender = sender;
         this.content = content;
         this.dateSent = dateSent;
+        this.receiver = "";
         this.hmac = "";
         this.sig = "";
     }
@@ -40,6 +48,8 @@ public class Message implements Serializable {
         }
         hmac = message.substring(message.indexOf("hmac") + 6,
                 message.indexOf("'", message.indexOf("hmac") + 6));
+        receiver = message.substring(message.indexOf("receiver") + 10,
+                message.indexOf("'", message.indexOf("receiver") + 10));
         sig = message.substring(message.indexOf("sig") + 5,
                 message.indexOf("'", message.indexOf("sig") + 5));
         content = message.substring(message.indexOf("content") + 9, message.length()-2);
@@ -57,6 +67,7 @@ public class Message implements Serializable {
                 "sender='" + sender + '\'' +
                 ", dateSent='" + formatter.format(dateSent) + '\'' +
                 ", hmac='" + hmac + '\'' +
+                ", receiver='" + receiver + '\'' +
                 ", sig='" + sig + '\'' +
                 ", content='" + content + '\'' +
                 '}';
@@ -67,6 +78,7 @@ public class Message implements Serializable {
         return "Message{" +
                 "sender='" + sender + '\'' +
                 ", dateSent='" + formatter.format(dateSent) + '\'' +
+                ", receiver='" + receiver + '\'' +
                 ", content='" + content + '\'' +
                 '}';
     }
@@ -97,6 +109,33 @@ public class Message implements Serializable {
         return "(" + formatter.format(dateSent) + ")[" + sender + "]" + icon + ": " + content;
     }
 
+    public String toUIString() {
+        return toUIString(checkSignature());
+    }
+
+    public SignatureStatus checkSignature() {
+        Message.SignatureStatus signatureStatus = UNSIGNED;
+        if (!getSig().equals("")) {
+            X509Certificate senderCert = X509.getUserCertificate(getSender());
+            if (senderCert == null) {
+                //controller.writeLine("Signed but the certificate not found.");
+            }
+            else {
+                if (!verifySignature(senderCert.getPublicKey())) {
+                    //controller.writeLine("Signature invalid!");
+                    signatureStatus = SIGNATURE_INVALID;
+                }
+                else {
+                    signatureStatus = SIGNATURE_VALID;
+                }
+            }
+        }
+        else {
+            signatureStatus = UNSIGNED;
+        }
+        return signatureStatus;
+    }
+
     public String getHmacString(SecretKey key) { //get HMAC value of the message as Base64 string
         return Base64.getEncoder().encodeToString(SHA.digest(this.toStringWithoutHmac()
                 + Base64.getEncoder().encodeToString(key.getEncoded())));
@@ -119,6 +158,12 @@ public class Message implements Serializable {
     }
     public boolean verifySignature(PublicKey key) {
         return RSA.verifySignature(toStringWithoutHmac(), key, getSig());
+    }
+    public void encrypt(Certificate cert) {
+        content = RSA.encrypt(content, cert);
+    }
+    public void decrypt(PrivateKey privateKey) {
+        content = RSA.decrypt(content, privateKey);
     }
 
     public String getSender() {
@@ -152,6 +197,14 @@ public class Message implements Serializable {
     public Message setHmac(SecretKey key) {
         this.hmac = getHmacString(key);
         return this;
+    }
+
+    public String getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
     }
 
     public String getSig() {

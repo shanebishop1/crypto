@@ -60,6 +60,17 @@ public class Server { //Central server, hosts all clients in one chat room
         }
     }
 
+    void sendPrivateMessage(Message message, String username) {
+        database.getHistory().add(message);
+        DB.saveDatabase(database);
+        for (UserThread user : userThreads) {
+            if (user != null && user.getUserName().equals(username)) {
+                user.sendMessage(message);
+            }
+        }
+    }
+
+
     void removeUser(UserThread user) { //removes the specific UserThread, messages other users
         String username = user.getUserName();
         if (userThreads.remove(user) && user.getUserName() != null) {

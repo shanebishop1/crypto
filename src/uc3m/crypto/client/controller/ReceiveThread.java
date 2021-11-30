@@ -49,26 +49,14 @@ public class ReceiveThread extends Thread { //A parallel thread for receiving me
                             case "DENIED" -> controller.loginFailure();
                         }
                     }
-                    Message.SignatureStatus signatureStatus = UNSIGNED;
-                    if (!msg.getSig().equals("")) {
-                        X509Certificate senderCert = X509.getUserCertificate(msg.getSender());
-                        if (senderCert == null) {
-                            //controller.writeLine("Signed but the certificate not found.");
-                        }
-                        else {
-                            if (!msg.verifySignature(senderCert.getPublicKey())) {
-                                //controller.writeLine("Signature invalid!");
-                                signatureStatus = SIGNATURE_INVALID;
-                            }
-                            else {
-                                signatureStatus = SIGNATURE_VALID;
-                            }
-                        }
+                    Message.SignatureStatus signatureStatus = msg.checkSignature();
+                    if (msg.getReceiver().equals(controller.getUsername())) {
+                        msg.decrypt(controller.getPrivateKey());
                     }
-                    else {
-                        signatureStatus = UNSIGNED;
+                    if (controller.getUI() != null) {
+                        controller.getUI().writeLine(msg.toUIString(signatureStatus));
+                        controller.getUI().scrollDown();
                     }
-                    if (controller.getUI() != null) controller.getUI().writeLine(msg.toUIString(signatureStatus));
                 } catch (Exception ex) {
                     System.out.println("Receive Error: " + ex.getMessage());
                 }

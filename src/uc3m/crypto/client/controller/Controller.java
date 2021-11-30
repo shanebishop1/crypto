@@ -96,6 +96,7 @@ public class Controller {
     }
 
     public void logout() { //logout sequence
+        ui.setPrivateMessageReceiver("");
         ui.dispose();
         sendMessage("///LOGGING_OUT");
         welcome = new Welcome(this);

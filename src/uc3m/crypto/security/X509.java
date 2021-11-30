@@ -41,6 +41,7 @@ public class X509 {
         X509.path = path;
     }
 
+    //not used
     public static X509Certificate generateCertificate(
             X500Name issuer,
             X500Name subject,
@@ -49,7 +50,7 @@ public class X509 {
     )
             throws CertificateException, OperatorCreationException
     {
-        X500Name x500Name = new X500Name("CN=***.com, OU=Security&Defense, O=*** Crypto., L=Ottawa, ST=Ontario, C=CA");
+        //"CN=user, OU=Security&Defense, ST=State"
         SubjectPublicKeyInfo pubKeyInfo = SubjectPublicKeyInfo.getInstance(subjectPublicKey.getEncoded());
         final Date start = new Date();
         final Date until = Date.from(LocalDate.now().plus(365, ChronoUnit.DAYS).atStartOfDay().toInstant(ZoneOffset.UTC));
@@ -93,10 +94,13 @@ public class X509 {
         return null;
     }
 
+    //wrapper for the recursive function below
     public static boolean validateCertificate(X509Certificate certificate) {
         return validateCertificate(certificate, 0);
     }
 
+    //validates certificate, with recursion depth of 10 so that it does not crash when a user would provide
+    // a fake self-signed certificate
     public static boolean validateCertificate(X509Certificate certificate, int recursionDepth) {
         try {
             if (certificate == null) {
@@ -135,17 +139,19 @@ public class X509 {
         return false;
     }
 
-    public static PrivateKey loadPrivateKey(String username) {
+    public static PrivateKey loadPrivateKey(String username) { //load private key from a file
         try {
             Path keyPath = Paths.get(path+username+"/"+username+".key.pem");
             String keyFileString = Files.readString(keyPath, StandardCharsets.US_ASCII);
 
+            //formats the PEM file to get only the key encoded in Base64
             String privateKeyPem = keyFileString.replace("-----BEGIN PRIVATE KEY-----\n", "");
             privateKeyPem = privateKeyPem.replace("-----END PRIVATE KEY-----", "");
             privateKeyPem = privateKeyPem.replaceAll("\n", "");
 
             byte[] keyBytes = Base64.getDecoder().decode(privateKeyPem);
 
+            //Used PKCS8 because its best compatible with java
             PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return keyFactory.generatePrivate(spec);

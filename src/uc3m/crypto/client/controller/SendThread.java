@@ -2,12 +2,17 @@ package uc3m.crypto.client.controller;
 
 
 import uc3m.crypto.security.AES;
+import uc3m.crypto.security.X509;
 import uc3m.crypto.server.Server;
 import uc3m.crypto.server.model.Message;
 
 import java.io.*;
 import java.net.Socket;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 import java.util.Date;
+
+import static uc3m.crypto.server.model.Message.SignatureStatus.*;
 
 public class SendThread extends Thread {
     private PrintWriter writer;
@@ -41,7 +46,27 @@ public class SendThread extends Thread {
     synchronized public void sendText(String outMsg) { //easy sendText function, encrypts each string sent
         if (outMsg != null && !outMsg.equals("") && !outMsg.isBlank()) {
             try {
-                Message message = new Message(controller.getUsername(), outMsg, new Date()).setHmac(controller.getKey());
+                Message message = new Message(controller.getUsername(), outMsg, new Date());
+                String receiver = "";
+                boolean isEndToEnd = false;
+                String plainContent = message.getContent();
+                if (controller.getUI() != null) {
+                    receiver = controller.getUI().getPrivateMessageReceiver().strip();
+                    if (!receiver.equals("")) {
+                        Certificate receiverCert = X509.getUserCertificate(receiver);
+                        if (receiverCert != null) {
+                            message.setReceiver(receiver);
+                            message.encrypt(receiverCert);
+                            isEndToEnd = true;
+                        }
+                        else {
+                            controller.getUI().writeLine("The chosen user cannot receive private " +
+                                    "messages because their certificate is not available.");
+                            return;
+                        }
+                    }
+                }
+                message.setHmac(controller.getKey());
                 if (controller.getPrivateKey() != null && controller.isSignedMode()) {
                     message.sign(controller.getPrivateKey());
                 }
@@ -50,6 +75,12 @@ public class SendThread extends Thread {
                         controller.getKey(),
                         controller.getIv());
                 writer.println(encMsg);
+                if (isEndToEnd) {
+                    Message.SignatureStatus signatureStatus = message.checkSignature();
+                    message.setContent(plainContent);
+                    controller.getUI().writeLine(message.toUIString(signatureStatus));
+                    controller.getUI().scrollDown();
+                }
             } catch (Exception ex) {
                 System.out.println("AES: " + ex.getMessage());
             }

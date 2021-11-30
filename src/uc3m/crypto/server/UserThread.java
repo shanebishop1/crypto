@@ -93,9 +93,15 @@ public class UserThread extends Thread {
                         break;
                     }
                     //create message object, only the server can objectively say that it is truly the user with the userName
-                    clientMessage = new Message(userName, plainMessage, receivedMessage.getDateSent());
-                    clientMessage.setSig(receivedMessage.getSig());
-                    server.broadcast(clientMessage);
+                    /*clientMessage = new Message(userName, plainMessage, receivedMessage.getDateSent());
+                    clientMessage.setSig(receivedMessage.getSig());*/
+                    System.out.println("receiver: " + receivedMessage.getReceiver());
+                    if (!receivedMessage.getReceiver().equals("")) {
+                        server.sendPrivateMessage(receivedMessage, receivedMessage.getReceiver());
+                    }
+                    else {
+                        server.broadcast(receivedMessage);
+                    }
                 } catch (Exception ex) {
                     System.out.println("Server decryption: " + ex.getMessage());
                 }
