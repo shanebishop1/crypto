@@ -44,7 +44,7 @@ public class SendThread extends Thread {
     }
 
     synchronized public void sendText(String outMsg) { //easy sendText function, encrypts each string sent
-        if (outMsg != null && !outMsg.equals("") && !outMsg.isBlank()) {
+        if (outMsg != null && !outMsg.strip().equals("") && !outMsg.isBlank()) {
             try {
                 Message message = new Message(controller.getUsername(), outMsg, new Date());
                 String receiver = "";

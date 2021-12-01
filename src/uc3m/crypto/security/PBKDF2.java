@@ -25,9 +25,9 @@ public class PBKDF2 {
         }
     }
 
-    //default hash used by our database, 10000 iterations, 512-bit key length
+    //default hash used by our database, 100 000 iterations, 512-bit key length
     public static String defaultHash(final String password, final String salt) {
-        byte[] hashedBytes = hashPassword(password, salt, 10000, 512);
+        byte[] hashedBytes = hashPassword(password, salt, 100000, 256);
         String hashedPassword = Base64.getEncoder().encodeToString(hashedBytes);
         return hashedPassword;
     }

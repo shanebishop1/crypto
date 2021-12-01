@@ -32,6 +32,7 @@ public class Server { //Central server, hosts all clients in one chat room
 
     public void start() { //server listens on the socket and for each user creates new UserThread
         X509.setPath("C:\\Users\\lukyb\\Documents\\openssl\\");
+        X509.setPath("./openssl/");
         privateKey = X509.loadPrivateKey("server");
         try (ServerSocket serverSocket = new ServerSocket(5505)) {
             while (true) {

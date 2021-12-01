@@ -41,6 +41,7 @@ public class Controller {
 
     public Controller() {
         X509.setPath("C:\\Users\\lukyb\\Documents\\openssl\\");
+        X509.setPath("./openssl/");
         random = new Random();
         welcome = new Welcome(this);
 

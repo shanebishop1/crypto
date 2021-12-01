@@ -38,6 +38,7 @@ public class Messaging extends JFrame implements KeyListener {
     }
 
     private void setup() {
+        Color backgroundColor = new Color(24, 24, 24);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int halfScreenHeight = (int) (screenSize.height / 2);
         int halfScreenWidth = (int) (screenSize.width / 2);
@@ -49,7 +50,7 @@ public class Messaging extends JFrame implements KeyListener {
         this.setVisible(true);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         MainPanel = new JPanel();
-        MainPanel.setBackground(new Color(24, 24, 24));
+        MainPanel.setBackground(backgroundColor);
 
         MainPanel.setLayout(new CardLayout(0, 0));
         this.add(MainPanel);
@@ -66,7 +67,7 @@ public class Messaging extends JFrame implements KeyListener {
         out = new JTextArea();
         out.setFont(labelFont14);
         out.setForeground(new Color(255,255,255));
-        out.setBackground(new Color(24,24,24));
+        out.setBackground(backgroundColor);
         out.setEditable(false);
         out.setWrapStyleWord(true);
         out.setLineWrap(true);
@@ -77,11 +78,11 @@ public class Messaging extends JFrame implements KeyListener {
 //        contacts.setPreferredSize(new Dimension(100, 0));
 //        Messages.add(contacts, BorderLayout.WEST);
         panelSouth = new JPanel();
-        panelSouth.setBackground(new Color(24, 24, 24));
+        panelSouth.setBackground(backgroundColor);
         panelSouth.setLayout(new BorderLayout(0, 0));
         Messages.add(panelSouth, BorderLayout.SOUTH);
         buttonSend = new JButton();
-        buttonSend.setBackground(new Color(24, 24, 24));
+        buttonSend.setBackground(backgroundColor);
         buttonSend.setFont(labelFont14);
         buttonSend.setOpaque(false);
         buttonSend.setFocusable(false);
@@ -100,13 +101,14 @@ public class Messaging extends JFrame implements KeyListener {
         /*outScrollbar = new JScrollBar();
         Messages.add(outScrollbar, BorderLayout.EAST);*/
         panelNorth = new JPanel();
-        panelNorth.setBackground(new Color(24, 24, 24));
+        panelNorth.setBackground(backgroundColor);
         panelNorth.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         Messages.add(panelNorth, BorderLayout.NORTH);
         signedModeCheckBox = new JCheckBox();
         signedModeCheckBox.setText("Signed mode");
         signedModeCheckBox.setForeground(Color.white);
         signedModeCheckBox.setFont(labelFont14);
+        signedModeCheckBox.setBackground(backgroundColor);
         panelNorth.add(signedModeCheckBox);
         privateMessageReceiver = new JTextField();
         privateMessageReceiver.setColumns(0);
@@ -114,24 +116,25 @@ public class Messaging extends JFrame implements KeyListener {
         privateMessageReceiver.setPreferredSize(new Dimension(100, 30));
         panelNorth.add(privateMessageReceiver);
         logoutButton = new JButton();
-        logoutButton.setBackground(new Color(24, 24, 24));
+        logoutButton.setBackground(backgroundColor);
+        logoutButton.setForeground(Color.white);
         logoutButton.setFont(labelFont14);
         logoutButton.setOpaque(false);
         logoutButton.setText("Logout");
         panelNorth.add(logoutButton);
         settingsButton = new JButton();
-        settingsButton.setBackground(new Color(24, 24, 24));
+        settingsButton.setBackground(backgroundColor);
         settingsButton.setFont(labelFont14);
         settingsButton.setOpaque(false);
         settingsButton.setText("Connect");
         panelNorth.add(settingsButton);
         //SETTINGS PANEL
         Settings = new JPanel();
-        Settings.setBackground(new Color(24, 24, 24));
+        Settings.setBackground(backgroundColor);
         Settings.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         MainPanel.add(Settings, "Settings");
         final JPanel panel1 = new JPanel();
-        panel1.setBackground(new Color(24, 24, 24));
+        panel1.setBackground(backgroundColor);
         panel1.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(4, 2, new Insets(0, 0, 0, 0), -1, -1));
         Settings.add(panel1);
         /*final JLabel label1 = new JLabel();
