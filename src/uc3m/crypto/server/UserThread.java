@@ -52,6 +52,9 @@ public class UserThread extends Thread {
             encryptedMessage = reader.readLine(); //PASSWORD
             receivedMessage = new Message(AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv), key);
             String password = receivedMessage.getContent();
+            if (username == null || password == null) {
+                return;
+            }
             if (isSignUpInstance) {
                 long start = System.currentTimeMillis();
                 user = server.signUp(username, password);

@@ -106,6 +106,13 @@ public class Controller {
     }
 
     public void signUp(String username, String password) { //signup sequence
+        if (username.length() < 1) {
+            return;
+        }
+        if (password.length() < 12) {
+            writeLine("Password shorter than 12 chars.");
+            return;
+        }
         setUsername(username);
         sendMessage("SignMeUp");
         sendMessage(username);
