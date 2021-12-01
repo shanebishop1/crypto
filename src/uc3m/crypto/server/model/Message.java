@@ -89,24 +89,32 @@ public class Message implements Serializable {
 
     public String toUIString(SignatureStatus signatureStatus) { //this string is printed on the user interface
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
-        String icon = "";
+        String sigWord = "";
+        String accessWord = "PRIVATE";
+        String padding = "";
+        if(this.getReceiver().equals("")){
+            accessWord = "PUBLIC";
+            padding += "\u2003";
+        }
+
         switch (signatureStatus) {
             case UNSIGNED:
-                icon = "";
+                sigWord = "UNSIGNED";
                 break;
             case SIGNATURE_VALID:
-                icon = "🖋";
+                sigWord = "SIGNED";
+                padding += "\u2003\u2002";
                 break;
             case SIGNATURE_INVALID:
-                icon = "🚫";
+                sigWord = "INVALID SIGNATURE";
                 break;
             case CERTIFICATE_NOT_FOUND:
-                icon = "?";
+                sigWord = "?";
                 break;
             default:
                 break;
         }
-        return "(" + formatter.format(dateSent) + ")[" + sender + "]" + icon + ": " + content;
+        return "(" + formatter.format(dateSent) + ")" + accessWord + "+"+ sigWord + padding + "[" + sender + "]" +  ": " + content;
     }
 
     public String toUIString() {

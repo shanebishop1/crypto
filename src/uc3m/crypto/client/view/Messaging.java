@@ -44,10 +44,13 @@ public class Messaging extends JFrame implements KeyListener {
         int frameWidth = 800;
         int frameHeight = 500; //centering
         this.setBounds(halfScreenWidth - frameWidth / 2, halfScreenHeight - frameHeight / 2, frameWidth, frameHeight);
+        Font labelFont14 = new Font(Font.SANS_SERIF, Font.BOLD, 14);
 
         this.setVisible(true);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         MainPanel = new JPanel();
+        MainPanel.setBackground(new Color(24, 24, 24));
+
         MainPanel.setLayout(new CardLayout(0, 0));
         this.add(MainPanel);
         //MESSAGES PANEL
@@ -55,23 +58,32 @@ public class Messaging extends JFrame implements KeyListener {
         Messages.setLayout(new BorderLayout(0, 0));
         MainPanel.add(Messages, "Messages");
         outWrapper = new JPanel(new BorderLayout());
+        outWrapper.setBackground(new Color(24, 24, 24));
         outScrollable = new JScrollPane(outWrapper, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
         );
         outScrollable.getVerticalScrollBar().setUnitIncrement(16);
         out = new JTextArea();
+        out.setFont(labelFont14);
+        out.setForeground(new Color(255,255,255));
+        out.setBackground(new Color(24,24,24));
         out.setEditable(false);
         out.setWrapStyleWord(true);
         out.setLineWrap(true);
         outWrapper.add(out, BorderLayout.CENTER);
         Messages.add(outScrollable, BorderLayout.CENTER);
-        contacts = new JList();
-        contacts.setPreferredSize(new Dimension(100, 0));
-        Messages.add(contacts, BorderLayout.WEST);
+//        contacts = new JList();
+//        contacts.setBackground(new Color(24,24,24));
+//        contacts.setPreferredSize(new Dimension(100, 0));
+//        Messages.add(contacts, BorderLayout.WEST);
         panelSouth = new JPanel();
+        panelSouth.setBackground(new Color(24, 24, 24));
         panelSouth.setLayout(new BorderLayout(0, 0));
         Messages.add(panelSouth, BorderLayout.SOUTH);
         buttonSend = new JButton();
+        buttonSend.setBackground(new Color(24, 24, 24));
+        buttonSend.setFont(labelFont14);
+        buttonSend.setOpaque(false);
         buttonSend.setFocusable(false);
         buttonSend.setText("Send");
         panelSouth.add(buttonSend, BorderLayout.EAST);
@@ -81,32 +93,45 @@ public class Messaging extends JFrame implements KeyListener {
         in.setPreferredSize(new Dimension(50, 30));
         panelSouth.add(in, BorderLayout.CENTER);
         usernameLabel = new JLabel();
+        usernameLabel.setForeground(Color.white);
+        usernameLabel.setFont(labelFont14);
         usernameLabel.setText("Username:");
         panelSouth.add(usernameLabel, BorderLayout.WEST);
         /*outScrollbar = new JScrollBar();
         Messages.add(outScrollbar, BorderLayout.EAST);*/
         panelNorth = new JPanel();
+        panelNorth.setBackground(new Color(24, 24, 24));
         panelNorth.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         Messages.add(panelNorth, BorderLayout.NORTH);
         signedModeCheckBox = new JCheckBox();
         signedModeCheckBox.setText("Signed mode");
+        signedModeCheckBox.setForeground(Color.white);
+        signedModeCheckBox.setFont(labelFont14);
         panelNorth.add(signedModeCheckBox);
         privateMessageReceiver = new JTextField();
         privateMessageReceiver.setColumns(0);
-        privateMessageReceiver.setMinimumSize(new Dimension(50, 30));
-        privateMessageReceiver.setPreferredSize(new Dimension(50, 30));
+        privateMessageReceiver.setMinimumSize(new Dimension(100, 30));
+        privateMessageReceiver.setPreferredSize(new Dimension(100, 30));
         panelNorth.add(privateMessageReceiver);
         logoutButton = new JButton();
+        logoutButton.setBackground(new Color(24, 24, 24));
+        logoutButton.setFont(labelFont14);
+        logoutButton.setOpaque(false);
         logoutButton.setText("Logout");
         panelNorth.add(logoutButton);
         settingsButton = new JButton();
+        settingsButton.setBackground(new Color(24, 24, 24));
+        settingsButton.setFont(labelFont14);
+        settingsButton.setOpaque(false);
         settingsButton.setText("Connect");
         panelNorth.add(settingsButton);
         //SETTINGS PANEL
         Settings = new JPanel();
+        Settings.setBackground(new Color(24, 24, 24));
         Settings.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         MainPanel.add(Settings, "Settings");
         final JPanel panel1 = new JPanel();
+        panel1.setBackground(new Color(24, 24, 24));
         panel1.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(4, 2, new Insets(0, 0, 0, 0), -1, -1));
         Settings.add(panel1);
         /*final JLabel label1 = new JLabel();
@@ -115,12 +140,16 @@ public class Messaging extends JFrame implements KeyListener {
         listenPort = new JTextField();
         panel1.add(listenPort, new com.intellij.uiDesigner.core.GridConstraints(0, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));*/
         final JLabel label2 = new JLabel();
-        label2.setText("Target port:");
+        label2.setText("Target Port:");
+        label2.setForeground(Color.white);
+        label2.setFont(labelFont14);
         panel1.add(label2, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         targetPort = new JTextField();
         panel1.add(targetPort, new com.intellij.uiDesigner.core.GridConstraints(1, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final JLabel label3 = new JLabel();
         label3.setText("Target IP:");
+        label3.setForeground(Color.white);
+        label3.setFont(labelFont14);
         panel1.add(label3, new com.intellij.uiDesigner.core.GridConstraints(2, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         hostname = new JTextField();
         panel1.add(hostname, new com.intellij.uiDesigner.core.GridConstraints(2, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
@@ -195,7 +224,15 @@ public class Messaging extends JFrame implements KeyListener {
         if (line.substring(line.length() - 1).toCharArray()[0] != '\n') {
             line += "\n";
         }
-        out.setText(out.getText() + line);
+        out.setText(out.getText() + line +'\n');
+    }
+    public void writeLine(String line, boolean isPrivate) { //writes line to the big center text field
+        if (line == null)
+            return;
+        if (line.substring(line.length() - 1).toCharArray()[0] != '\n') {
+            line += "\n";
+        }
+        out.setText(out.getText() + line +'\n');
     }
 
     public String getUserInput() { //returns user input, sets it to an empty string
