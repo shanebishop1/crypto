@@ -87,6 +87,7 @@ public class Messaging extends JFrame implements KeyListener {
         buttonSend.setOpaque(false);
         buttonSend.setFocusable(false);
         buttonSend.setText("Send");
+        buttonSend.setForeground(Color.white);
         panelSouth.add(buttonSend, BorderLayout.EAST);
         in = new JTextField();
         in.setColumns(0);
@@ -127,7 +128,7 @@ public class Messaging extends JFrame implements KeyListener {
         settingsButton.setFont(labelFont14);
         settingsButton.setOpaque(false);
         settingsButton.setText("Connect");
-        panelNorth.add(settingsButton);
+        //panelNorth.add(settingsButton);
         //SETTINGS PANEL
         Settings = new JPanel();
         Settings.setBackground(backgroundColor);
@@ -137,11 +138,7 @@ public class Messaging extends JFrame implements KeyListener {
         panel1.setBackground(backgroundColor);
         panel1.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(4, 2, new Insets(0, 0, 0, 0), -1, -1));
         Settings.add(panel1);
-        /*final JLabel label1 = new JLabel();
-        label1.setText("Listen on port:");
-        panel1.add(label1, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        listenPort = new JTextField();
-        panel1.add(listenPort, new com.intellij.uiDesigner.core.GridConstraints(0, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));*/
+
         final JLabel label2 = new JLabel();
         label2.setText("Target Port:");
         label2.setForeground(Color.white);

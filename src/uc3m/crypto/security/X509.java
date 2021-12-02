@@ -1,17 +1,15 @@
 package uc3m.crypto.security;
 
-import org.bouncycastle.asn1.x500.RDN;
+/*import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x500.style.IETFUtils;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.cert.X509v3CertificateBuilder;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.operator.ContentSigner;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;*/
+
+
+import javax.naming.ldap.LdapName;
+import javax.naming.ldap.Rdn;
+
 import uc3m.crypto.server.model.Message;
 
 import java.io.FileInputStream;
@@ -42,7 +40,7 @@ public class X509 {
     }
 
     //not used
-    public static X509Certificate generateCertificate(
+    /*public static X509Certificate generateCertificate(
             X500Name issuer,
             X500Name subject,
             PublicKey subjectPublicKey,
@@ -55,7 +53,7 @@ public class X509 {
         final Date start = new Date();
         final Date until = Date.from(LocalDate.now().plus(365, ChronoUnit.DAYS).atStartOfDay().toInstant(ZoneOffset.UTC));
         final X509v3CertificateBuilder certificateBuilder = new X509v3CertificateBuilder(issuer,
-                new BigInteger(16, new SecureRandom()), start, until, /*Subject: */ subject, pubKeyInfo
+                new BigInteger(16, new SecureRandom()), start, until, subject, pubKeyInfo
         );
         ContentSigner contentSigner = new JcaContentSignerBuilder("SHA256WithRSA").build(issuerPrivateKey);
 
@@ -65,16 +63,28 @@ public class X509 {
         System.out.println("x.509 certificate has been successfully generated!");
 
         return certificate;
+    }*/
+
+
+    public static X509Certificate getCACertificate(String username) {
+        return getCACertificate(username, true);
     }
 
-    public static X509Certificate getCACertificate(String name) {
+    public static X509Certificate getCACertificate(String name , boolean toValidate) {
         name = name.toLowerCase(Locale.ROOT);
         try {
             CertificateFactory fact = CertificateFactory.getInstance("X.509");
             FileInputStream is = new FileInputStream (path+name+".pem");
             X509Certificate cer = (X509Certificate) fact.generateCertificate(is);
             is.close();
-            return cer;
+            if (toValidate) {
+                if (validateCertificate(cer))
+                    return cer;
+                else
+                    return null;
+            }
+            else
+                return cer;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -82,12 +92,23 @@ public class X509 {
     }
 
     public static X509Certificate getUserCertificate(String username) {
+        return getUserCertificate(username, true);
+    }
+
+    public static X509Certificate getUserCertificate(String username, boolean toValidate) {
         try {
             CertificateFactory fact = CertificateFactory.getInstance("X.509");
             FileInputStream fin = new FileInputStream (path+username+".crt");
             X509Certificate cer = (X509Certificate) fact.generateCertificate(fin);
             fin.close();
-            return cer;
+            if (toValidate) {
+                if (validateCertificate(cer))
+                    return cer;
+                else
+                    return null;
+            }
+            else
+                return cer;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -114,15 +135,34 @@ public class X509 {
                 ex.printStackTrace();
                 return false;
             }
-            X500Name subject = new JcaX509CertificateHolder(certificate).getSubject();
+            /*X500Name subject = new JcaX509CertificateHolder(certificate).getSubject();
             RDN cnSubject = subject.getRDNs(BCStyle.CN)[0];
             String cnSubjectString = IETFUtils.valueToString(cnSubject.getFirst().getValue());
             X500Name issuer = new JcaX509CertificateHolder(certificate).getIssuer();
             RDN cnIssuer = issuer.getRDNs(BCStyle.CN)[0];
-            String cnIssuerString = IETFUtils.valueToString(cnIssuer.getFirst().getValue());
-            X509Certificate caCert = getCACertificate(cnIssuerString);
+            String cnIssuerString = IETFUtils.valueToString(cnIssuer.getFirst().getValue());*/
+            String subject = certificate.getSubjectX500Principal().getName();
+            LdapName ldapDN = new LdapName(subject);
+            String cnSubjectString = "";
+            for(Rdn rdn : ldapDN.getRdns()) {
+                if(rdn.getType().equalsIgnoreCase("CN")) {
+                    cnSubjectString = (String)rdn.getValue();
+                    break;
+                }
+            }
+            String issuer = certificate.getIssuerX500Principal().getName();
+            ldapDN = new LdapName(issuer);
+            String cnIssuerString = "";
+            for(Rdn rdn : ldapDN.getRdns()) {
+                if(rdn.getType().equalsIgnoreCase("CN")) {
+                    cnIssuerString = (String)rdn.getValue();
+                    break;
+                }
+            }
+
+            X509Certificate caCert = getCACertificate(cnIssuerString, false);
             certificate.verify(caCert.getPublicKey());
-            System.out.println(cnSubjectString + " is valid.");
+            //System.out.println(cnSubjectString + " is valid.");
             if (cnIssuerString.equals("RCA") && cnIssuerString.equals(cnSubjectString)) {
                 return true;
             }

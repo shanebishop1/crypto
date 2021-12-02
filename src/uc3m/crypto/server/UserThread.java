@@ -98,7 +98,6 @@ public class UserThread extends Thread {
                     //create message object, only the server can objectively say that it is truly the user with the userName
                     /*clientMessage = new Message(userName, plainMessage, receivedMessage.getDateSent());
                     clientMessage.setSig(receivedMessage.getSig());*/
-                    System.out.println("receiver: " + receivedMessage.getReceiver());
                     if (!receivedMessage.getReceiver().equals("")) {
                         server.sendPrivateMessage(receivedMessage, receivedMessage.getReceiver());
                     }
@@ -120,7 +119,7 @@ public class UserThread extends Thread {
             server.removeUser(this); //on thread finish
             socket.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         } catch (AuthenticationException e) { //the user gets removed here in the case of denial of access because of authentication
             server.removeUser(this);
             try {

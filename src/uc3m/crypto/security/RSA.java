@@ -1,6 +1,5 @@
 package uc3m.crypto.security;
 
-import org.bouncycastle.jcajce.provider.symmetric.ARC4;
 
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
