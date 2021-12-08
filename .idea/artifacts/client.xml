@@ -7,6 +7,9 @@
       </element>
       <element id="module-output" name="crypto" />
       <element id="extracted-dir" path="$APPLICATION_HOME_DIR$/lib/forms_rt.jar" path-in-jar="/" />
+      <element id="directory" name="openssl">
+        <element id="dir-copy" path="$PROJECT_DIR$/openssl" />
+      </element>
     </root>
   </artifact>
 </component>
