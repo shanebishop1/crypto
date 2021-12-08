@@ -1,6 +1,7 @@
 package uc3m.crypto.server;
 
 import uc3m.crypto.security.AES;
+import uc3m.crypto.security.PBKDF2;
 import uc3m.crypto.security.SHA;
 import uc3m.crypto.server.model.Message;
 import uc3m.crypto.server.model.User;
@@ -51,15 +52,31 @@ public class UserThread extends Thread {
             encryptedMessage = reader.readLine(); //PASSWORD
             receivedMessage = new Message(AES.decrypt("AES/CBC/PKCS5Padding", encryptedMessage, key, iv), key);
             String password = receivedMessage.getContent();
-            password = SHA.digestToString(password);
-            if (isSignUpInstance) user = server.signUp(username, password);
-            else user = server.authenticate(username, password);
+            if (username == null || password == null) {
+                return;
+            }
+            if (isSignUpInstance) {
+                long start = System.currentTimeMillis();
+                user = server.signUp(username, password);
+                long finish = System.currentTimeMillis();
+                long timeElapsed = finish - start;
+                System.out.println("Sign up server execution time: " + timeElapsed + "ms");
+            }
+            else {
+                long start = System.currentTimeMillis();
+                user = server.authenticate(username, password);
+                long finish = System.currentTimeMillis();
+                long timeElapsed = finish - start;
+                System.out.println("Login server execution time: " + timeElapsed + "ms");
+            }
 
             if (user != null) { //success
                 if (isSignUpInstance) sendMessage("SIGNED UP"); //info for the user, that they have been successful
                 else sendMessage("ACCEPTED");
                 userName = username;
-                server.broadcast(new Message("Server", "****  " + userName + " has connected to the server.  ****", new Date()));
+                Message msg = new Message("server", "****  " + userName + " has connected to the server.  ****", new Date());
+                msg.sign(server.getPrivateKey());
+                server.broadcast(msg);
             } else { //info for the user, that they have NOT been successful
                 if (isSignUpInstance) {
                     sendMessage("INVALID SIGNUP"); //these messages are just information for the user, they still get removed serverside
@@ -79,8 +96,14 @@ public class UserThread extends Thread {
                         break;
                     }
                     //create message object, only the server can objectively say that it is truly the user with the userName
-                    clientMessage = new Message(userName, plainMessage, new Date());
-                    server.broadcast(clientMessage);
+                    /*clientMessage = new Message(userName, plainMessage, receivedMessage.getDateSent());
+                    clientMessage.setSig(receivedMessage.getSig());*/
+                    if (!receivedMessage.getReceiver().equals("")) {
+                        server.sendPrivateMessage(receivedMessage, receivedMessage.getReceiver());
+                    }
+                    else {
+                        server.broadcast(receivedMessage);
+                    }
                 } catch (Exception ex) {
                     System.out.println("Server decryption: " + ex.getMessage());
                 }
@@ -96,7 +119,7 @@ public class UserThread extends Thread {
             server.removeUser(this); //on thread finish
             socket.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         } catch (AuthenticationException e) { //the user gets removed here in the case of denial of access because of authentication
             server.removeUser(this);
             try {
@@ -120,7 +143,9 @@ public class UserThread extends Thread {
     }
 
     void sendMessage(String message) {
-        sendMessage(new Message("Server", message, new Date()));
+        Message msg = new Message("server", message, new Date());
+        msg.sign(server.getPrivateKey());
+        sendMessage(msg);
     }
 
     void sendMessage(Message message) { //encrypt and send message

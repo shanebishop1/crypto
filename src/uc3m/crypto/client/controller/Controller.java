@@ -5,6 +5,7 @@ import uc3m.crypto.client.view.Welcome;
 import uc3m.crypto.security.AES;
 import uc3m.crypto.security.DH;
 import uc3m.crypto.security.SHA;
+import uc3m.crypto.security.X509;
 import uc3m.crypto.server.model.Message;
 import uc3m.crypto.server.model.User;
 
@@ -13,6 +14,7 @@ import javax.crypto.spec.IvParameterSpec;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.security.PrivateKey;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Random;
@@ -33,13 +35,22 @@ public class Controller {
     private int targetPort;
     private String targetHostName;
 
+    private PrivateKey privateKey;
+
+    private boolean isSignedMode;
+
     public Controller() {
+        X509.setPath("C:\\Users\\lukyb\\Documents\\openssl\\");
+        X509.setPath("./openssl/");
         random = new Random();
         welcome = new Welcome(this);
 
         //default settings
         targetHostName = "localhost";
         targetPort = 5505;
+        privateKey = null;
+
+        isSignedMode = false;
     }
 
     public static void main(String[] args) { //Main client function
@@ -63,6 +74,7 @@ public class Controller {
     }
 
     public void login(String username, String password) { //login sequence
+        privateKey = X509.loadPrivateKey(username);
         setUsername(username);
         sendMessage("LogMeIn");
         sendMessage(username);
@@ -74,6 +86,7 @@ public class Controller {
         welcome.dispose();
         ui = new Messaging(this);
         ui.setUsername(getUsername());
+        ui.setSignedModeCheckboxVisibility(privateKey != null);
     }
 
     public void loginFailure() {
@@ -84,6 +97,7 @@ public class Controller {
     }
 
     public void logout() { //logout sequence
+        ui.setPrivateMessageReceiver("");
         ui.dispose();
         sendMessage("///LOGGING_OUT");
         welcome = new Welcome(this);
@@ -92,6 +106,13 @@ public class Controller {
     }
 
     public void signUp(String username, String password) { //signup sequence
+        if (username.length() < 1) {
+            return;
+        }
+        if (password.length() < 12) {
+            writeLine("Password shorter than 12 chars.");
+            return;
+        }
         setUsername(username);
         sendMessage("SignMeUp");
         sendMessage(username);
@@ -158,10 +179,22 @@ public class Controller {
         this.username = username;
     }
 
+    public boolean isSignedMode() {
+        return isSignedMode;
+    }
+
+    public void setSignedMode(boolean signedMode) {
+        isSignedMode = signedMode;
+    }
+
     public void sendMessage(String message) {
         if (sendThread != null) {
             sendThread.sendText(message);
         }
+    }
+
+    public PrivateKey getPrivateKey() {
+        return privateKey;
     }
 
     class ConnectServer extends Thread { //helper class, thread for retrying the connection to the server
