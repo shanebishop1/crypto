@@ -1,3 +1,0 @@
-Manifest-Version: 1.0
-Main-Class: uc3m.crypto.client.controller.Controller
-
