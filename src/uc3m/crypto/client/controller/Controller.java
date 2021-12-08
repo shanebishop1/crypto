@@ -21,7 +21,7 @@ import java.util.Random;
 
 
 public class Controller {
-    private Random random;
+    private final Random random;
     private Welcome welcome;
     private Messaging ui;
     private volatile User user;
@@ -40,7 +40,6 @@ public class Controller {
     private boolean isSignedMode;
 
     public Controller() {
-        X509.setPath("C:\\Users\\lukyb\\Documents\\openssl\\");
         X509.setPath("./openssl/");
         random = new Random();
         welcome = new Welcome(this);
@@ -198,8 +197,8 @@ public class Controller {
     }
 
     class ConnectServer extends Thread { //helper class, thread for retrying the connection to the server
-        private Controller controller;
-        private boolean maintainLabel;
+        private final Controller controller;
+        private final boolean maintainLabel;
 
         public ConnectServer(Controller controller, boolean maintainLabel) {
             this.controller = controller;

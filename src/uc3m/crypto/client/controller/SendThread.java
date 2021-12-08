@@ -16,8 +16,8 @@ import static uc3m.crypto.server.model.Message.SignatureStatus.*;
 
 public class SendThread extends Thread {
     private PrintWriter writer;
-    private Socket socket;
-    private Controller controller;
+    private final Socket socket;
+    private final Controller controller;
     private Server server;
 
     public SendThread(Socket socket, Controller controller) { //class for sending messages

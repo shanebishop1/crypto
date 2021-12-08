@@ -8,7 +8,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class Messaging extends JFrame implements KeyListener {
-    private Controller controller;
+    private final Controller controller;
 
     private JPanel MainPanel;
     private JPanel Messages;
@@ -40,8 +40,8 @@ public class Messaging extends JFrame implements KeyListener {
     private void setup() {
         Color backgroundColor = new Color(24, 24, 24);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int halfScreenHeight = (int) (screenSize.height / 2);
-        int halfScreenWidth = (int) (screenSize.width / 2);
+        int halfScreenHeight = screenSize.height / 2;
+        int halfScreenWidth = screenSize.width / 2;
         int frameWidth = 800;
         int frameHeight = 500; //centering
         this.setBounds(halfScreenWidth - frameWidth / 2, halfScreenHeight - frameHeight / 2, frameWidth, frameHeight);
@@ -82,12 +82,13 @@ public class Messaging extends JFrame implements KeyListener {
         panelSouth.setLayout(new BorderLayout(0, 0));
         Messages.add(panelSouth, BorderLayout.SOUTH);
         buttonSend = new JButton();
-        buttonSend.setBackground(backgroundColor);
+        buttonSend.setBackground(Color.white);
         buttonSend.setFont(labelFont14);
-        buttonSend.setOpaque(false);
+        buttonSend.setOpaque(true);
+        buttonSend.setBorderPainted(false);
         buttonSend.setFocusable(false);
         buttonSend.setText("Send");
-        buttonSend.setForeground(Color.white);
+        buttonSend.setForeground(backgroundColor);
         panelSouth.add(buttonSend, BorderLayout.EAST);
         in = new JTextField();
         in.setColumns(0);
@@ -117,16 +118,18 @@ public class Messaging extends JFrame implements KeyListener {
         privateMessageReceiver.setPreferredSize(new Dimension(100, 30));
         panelNorth.add(privateMessageReceiver);
         logoutButton = new JButton();
-        logoutButton.setBackground(backgroundColor);
-        logoutButton.setForeground(Color.white);
+        logoutButton.setBackground(Color.white);
+        logoutButton.setBorderPainted(false);
+        logoutButton.setForeground(backgroundColor);
         logoutButton.setFont(labelFont14);
-        logoutButton.setOpaque(false);
+        logoutButton.setOpaque(true);
         logoutButton.setText("Logout");
         panelNorth.add(logoutButton);
         settingsButton = new JButton();
         settingsButton.setBackground(backgroundColor);
+        settingsButton.setBorderPainted(false);
         settingsButton.setFont(labelFont14);
-        settingsButton.setOpaque(false);
+        settingsButton.setOpaque(true);
         settingsButton.setText("Connect");
         //panelNorth.add(settingsButton);
         //SETTINGS PANEL

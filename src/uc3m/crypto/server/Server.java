@@ -16,8 +16,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Server { //Central server, hosts all clients in one chat room
-    private Set<UserThread> userThreads = new HashSet<>(); //one thread per user
-    private DB database; //DB for storing users, message history
+    private final Set<UserThread> userThreads = new HashSet<>(); //one thread per user
+    private final DB database; //DB for storing users, message history
     private PrivateKey privateKey;
 
     public Server() {
@@ -31,7 +31,6 @@ public class Server { //Central server, hosts all clients in one chat room
     }
 
     public void start() { //server listens on the socket and for each user creates new UserThread
-        X509.setPath("C:\\Users\\lukyb\\Documents\\openssl\\");
         X509.setPath("./openssl/");
         privateKey = X509.loadPrivateKey("server");
         try (ServerSocket serverSocket = new ServerSocket(5505)) {

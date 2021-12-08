@@ -16,8 +16,8 @@ import static uc3m.crypto.server.model.Message.SignatureStatus.*;
 
 public class ReceiveThread extends Thread { //A parallel thread for receiving messages
     private BufferedReader reader;
-    private Socket socket;
-    private Controller controller;
+    private final Socket socket;
+    private final Controller controller;
 
     public ReceiveThread(Socket socket, Controller controller) {
         this.socket = socket;

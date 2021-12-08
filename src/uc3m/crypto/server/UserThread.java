@@ -17,8 +17,8 @@ import java.util.Date;
 public class UserThread extends Thread {
     private final SecretKey key;
     private final IvParameterSpec iv;
-    private Socket socket;
-    private Server server;
+    private final Socket socket;
+    private final Server server;
     private PrintWriter writer;
     private String userName;
     private User user;

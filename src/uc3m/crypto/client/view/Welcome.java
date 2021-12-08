@@ -26,8 +26,8 @@ public class Welcome extends JFrame implements KeyListener {
         Font labelFont14 = new Font(Font.SANS_SERIF, Font.BOLD, 14);
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int halfScreenHeight = (int) (screenSize.height / 2);
-        int halfScreenWidth = (int) (screenSize.width / 2);
+        int halfScreenHeight = screenSize.height / 2;
+        int halfScreenWidth = screenSize.width / 2;
         int frameWidth = 310;
         int frameHeight = 250;
 

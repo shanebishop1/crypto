@@ -204,10 +204,6 @@ public class X509 {
     }
 
     public static void main(String[] args) {
-        X509.setPath("C:\\Users\\lukyb\\Documents\\openssl\\");
-        System.out.println(validateCertificate(getUserCertificate("lukas")));
-        Message m = new Message("lukas", "Hello world", new Date());
-        m.sign(loadPrivateKey("lukas"));
-        //System.out.println(m.verifySignature(getUserCertificate("lukas").getPublicKey()));
+        X509.setPath("./openssl/");
     }
 }
